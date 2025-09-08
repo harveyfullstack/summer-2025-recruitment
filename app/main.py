@@ -18,8 +18,10 @@ from slowapi.errors import RateLimitExceeded
 
 app = FastAPI(
     title="Resume Fraud Detection System",
-    description="AI-powered resume fraud detection system",
+    description="AI-powered resume fraud detection system with contact verification, AI content detection, and document authenticity analysis",
     version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 app.state.limiter = limiter
@@ -81,7 +83,12 @@ async def analyze_ai_content_only(request: Request, file: UploadFile = File(...)
     return AIContentResult(**result)
 
 
-@app.post("/api/v1/examine/document")
+@app.post(
+    "/api/v1/examine/document",
+    response_model=DocumentAnalysisResult,
+    summary="Document Authenticity Analysis",
+    description="Analyze document metadata for authenticity and template abuse indicators",
+)
 @limiter.limit("10/minute")
 async def examine_document_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
@@ -95,7 +102,12 @@ async def examine_document_only(request: Request, file: UploadFile = File(...)):
     return DocumentAnalysisResult(**result)
 
 
-@app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
+@app.post(
+    "/api/v1/detect/resume",
+    response_model=FraudDetectionResult,
+    summary="Complete Fraud Detection",
+    description="Comprehensive fraud analysis using all detection methods with weighted scoring",
+)
 @limiter.limit("5/minute")
 async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
