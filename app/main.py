@@ -32,7 +32,7 @@ async def health_check():
 
 @app.post("/api/v1/verify/contact")
 async def verify_contact_only(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx")):
+    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
             status_code=400, detail="Only PDF and DOCX files are supported"
         )
@@ -51,7 +51,7 @@ async def verify_contact_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/analyze/content")
 async def analyze_ai_content_only(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx")):
+    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
             status_code=400, detail="Only PDF and DOCX files are supported"
         )
@@ -70,7 +70,7 @@ async def analyze_ai_content_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/examine/document")
 async def examine_document_only(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx")):
+    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
             status_code=400, detail="Only PDF and DOCX files are supported"
         )
@@ -88,7 +88,7 @@ async def examine_document_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
 async def detect_resume_fraud(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx")):
+    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
             status_code=400, detail="Only PDF and DOCX files are supported"
         )

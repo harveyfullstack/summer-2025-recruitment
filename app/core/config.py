@@ -8,7 +8,7 @@ class Settings:
     DEBUG: bool = config("DEBUG", default=False, cast=bool)
 
     MAX_FILE_SIZE: int = 10485760
-    ALLOWED_FILE_TYPES = ["pdf", "docx"]
+    ALLOWED_FILE_TYPES = ["pdf", "docx", "txt"]
 
     ABSTRACT_EMAIL_API = "https://emailvalidation.abstractapi.com/v1/"
     ABSTRACT_PHONE_API = "https://phonevalidation.abstractapi.com/v1/"

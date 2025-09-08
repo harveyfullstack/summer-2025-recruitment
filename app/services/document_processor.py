@@ -15,6 +15,8 @@ class DocumentProcessor:
             return DocumentProcessor._process_pdf(file_content)
         elif file_extension == "docx":
             return DocumentProcessor._process_docx(file_content)
+        elif file_extension == "txt":
+            return DocumentProcessor._process_txt(file_content, filename)
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
 
@@ -63,5 +65,24 @@ class DocumentProcessor:
                 "author": core_props.author,
                 "title": core_props.title,
                 "subject": core_props.subject,
+            },
+        }
+
+    @staticmethod
+    def _process_txt(file_content: bytes, filename: str) -> Dict[str, Any]:
+        try:
+            text = file_content.decode("utf-8")
+        except UnicodeDecodeError:
+            text = file_content.decode("latin-1")
+
+        return {
+            "text": text,
+            "metadata": {
+                "format": "txt",
+                "creation_date": None,
+                "modification_date": None,
+                "author": None,
+                "title": filename,
+                "file_size": len(file_content),
             },
         }
