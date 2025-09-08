@@ -73,16 +73,7 @@ async def examine_document_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
 async def detect_resume_fraud(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
-        raise HTTPException(
-            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
-        )
-
-    if len(await file.read()) > settings.MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail="File too large")
-
-    await file.seek(0)
-    file_content = await file.read()
+    file_content = await FileValidator.validate_file(file)
 
     try:
         document_data = await DocumentProcessor.extract_text_and_metadata(
