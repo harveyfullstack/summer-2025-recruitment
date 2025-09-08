@@ -11,17 +11,37 @@ class RiskLevel(str, Enum):
 
 
 class ContactVerificationResult(BaseModel):
-    email_verification: Optional[Dict[str, Any]] = None
-    phone_verification: Optional[Dict[str, Any]] = None
-    risk_score: float = Field(ge=0, le=1)
-    confidence: float = Field(ge=0, le=1)
+    email_verification: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Email validation results including format, deliverability, and disposable status",
+    )
+    phone_verification: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phone number validation results including format, carrier, and geographic data",
+    )
+    risk_score: float = Field(
+        ge=0,
+        le=1,
+        description="Contact information fraud risk score (0=low risk, 1=high risk)",
+    )
+    confidence: float = Field(
+        ge=0, le=1, description="Confidence level in the risk assessment"
+    )
 
 
 class AIContentResult(BaseModel):
-    overall_ai_probability: float = Field(ge=0, le=1)
-    sections_analyzed: Dict[str, float] = {}
-    suspicious_sections: List[str] = []
-    confidence: float = Field(ge=0, le=1)
+    overall_ai_probability: float = Field(
+        ge=0, le=1, description="Overall probability that content was AI-generated"
+    )
+    sections_analyzed: Dict[str, float] = Field(
+        default={}, description="AI probability scores for individual resume sections"
+    )
+    suspicious_sections: List[str] = Field(
+        default=[], description="Resume sections flagged as likely AI-generated"
+    )
+    confidence: float = Field(
+        ge=0, le=1, description="Confidence level in the AI detection analysis"
+    )
 
 
 class DocumentAnalysisResult(BaseModel):
@@ -32,14 +52,31 @@ class DocumentAnalysisResult(BaseModel):
 
 
 class FraudDetectionResult(BaseModel):
-    overall_risk_score: float = Field(ge=0, le=1)
-    risk_level: RiskLevel
-    confidence: float = Field(ge=0, le=1)
-    detected_issues: List[str] = []
-    contact_verification: Optional[ContactVerificationResult] = None
-    ai_content_analysis: Optional[AIContentResult] = None
-    document_analysis: Optional[DocumentAnalysisResult] = None
-    analysis_timestamp: datetime = Field(default_factory=datetime.utcnow)
+    overall_risk_score: float = Field(
+        ge=0, le=1, description="Combined fraud risk score from all detection methods"
+    )
+    risk_level: RiskLevel = Field(
+        description="Risk classification: low, medium, or high"
+    )
+    confidence: float = Field(
+        ge=0, le=1, description="Overall confidence in the fraud assessment"
+    )
+    detected_issues: List[str] = Field(
+        default=[], description="List of specific fraud indicators found"
+    )
+    contact_verification: Optional[ContactVerificationResult] = Field(
+        None, description="Contact information verification results"
+    )
+    ai_content_analysis: Optional[AIContentResult] = Field(
+        None, description="AI content detection results"
+    )
+    document_analysis: Optional[DocumentAnalysisResult] = Field(
+        None, description="Document authenticity analysis results"
+    )
+    analysis_timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Timestamp when analysis was performed",
+    )
 
 
 class HealthResponse(BaseModel):
