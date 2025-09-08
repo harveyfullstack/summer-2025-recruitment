@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
+from app.models.schemas import HealthResponse, ErrorResponse, FraudDetectionResult, RiskLevel
 from datetime import datetime
 
 app = FastAPI(
@@ -11,10 +13,18 @@ app = FastAPI(
 async def root():
     return {"message": "Resume Fraud Detection System", "status": "running"}
 
-@app.get("/health")
+@app.get("/health", response_model=HealthResponse)
 async def health_check():
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow(),
-        "version": "1.0.0"
-    }
+    return HealthResponse(status="healthy")
+
+@app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
+async def detect_resume_fraud(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith(('.pdf', '.docx')):
+        raise HTTPException(status_code=400, detail="Only PDF and DOCX files are supported")
+    
+    return FraudDetectionResult(
+        overall_risk_score=0.1,
+        risk_level=RiskLevel.LOW,
+        confidence=0.8,
+        detected_issues=[]
+    )
