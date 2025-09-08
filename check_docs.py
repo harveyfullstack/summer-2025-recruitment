@@ -5,11 +5,17 @@ import sys
 
 
 def start_server():
-    print("Starting FastAPI server...")
+    print("Starting FastAPI server with docs enabled...")
+    import os
+
+    env = os.environ.copy()
+    env["DOCS_ENABLED"] = "True"
+
     process = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "app.main:app", "--port", "8000"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env=env,
     )
 
     time.sleep(3)
