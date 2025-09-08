@@ -21,6 +21,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
+
 
 @app.get("/")
 async def root():
@@ -33,7 +36,8 @@ async def health_check():
 
 
 @app.post("/api/v1/verify/contact")
-async def verify_contact_only(file: UploadFile = File(...)):
+@limiter.limit("10/minute")
+async def verify_contact_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
     document_data = await DocumentProcessor.extract_text_and_metadata(
         file_content, file.filename
@@ -47,7 +51,8 @@ async def verify_contact_only(file: UploadFile = File(...)):
 
 
 @app.post("/api/v1/analyze/content")
-async def analyze_ai_content_only(file: UploadFile = File(...)):
+@limiter.limit("10/minute")
+async def analyze_ai_content_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
     document_data = await DocumentProcessor.extract_text_and_metadata(
         file_content, file.filename
