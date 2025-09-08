@@ -31,12 +31,22 @@ async def root():
     return {"message": "Resume Fraud Detection System", "status": "running"}
 
 
-@app.get("/health", response_model=HealthResponse)
+@app.get(
+    "/health",
+    response_model=HealthResponse,
+    summary="Health Check",
+    description="Check system health and status",
+)
 async def health_check():
     return HealthResponse(status="healthy")
 
 
-@app.post("/api/v1/verify/contact")
+@app.post(
+    "/api/v1/verify/contact",
+    response_model=ContactVerificationResult,
+    summary="Contact Information Verification",
+    description="Verify email addresses and phone numbers for fraud indicators",
+)
 @limiter.limit("10/minute")
 async def verify_contact_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
@@ -51,7 +61,12 @@ async def verify_contact_only(request: Request, file: UploadFile = File(...)):
     return ContactVerificationResult(**result)
 
 
-@app.post("/api/v1/analyze/content")
+@app.post(
+    "/api/v1/analyze/content",
+    response_model=AIContentResult,
+    summary="AI Content Detection",
+    description="Detect AI-generated content in resume sections",
+)
 @limiter.limit("10/minute")
 async def analyze_ai_content_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
