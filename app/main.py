@@ -11,7 +11,7 @@ from app.services.contact_verification import ContactVerificationService
 from app.services.ai_detection import AIContentDetectionService
 from app.services.document_analysis import DocumentAnalysisService
 from app.services.fraud_scorer import FraudScoringService
-from app.core.config import settings
+from app.core.validation import FileValidator
 
 app = FastAPI(
     title="Resume Fraud Detection System",
@@ -34,7 +34,7 @@ async def health_check():
 async def verify_contact_only(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
-            status_code=400, detail="Only PDF and DOCX files are supported"
+            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
         )
 
     file_content = await file.read()
@@ -53,7 +53,7 @@ async def verify_contact_only(file: UploadFile = File(...)):
 async def analyze_ai_content_only(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
-            status_code=400, detail="Only PDF and DOCX files are supported"
+            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
         )
 
     file_content = await file.read()
@@ -72,7 +72,7 @@ async def analyze_ai_content_only(file: UploadFile = File(...)):
 async def examine_document_only(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
-            status_code=400, detail="Only PDF and DOCX files are supported"
+            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
         )
 
     file_content = await file.read()
@@ -90,7 +90,7 @@ async def examine_document_only(file: UploadFile = File(...)):
 async def detect_resume_fraud(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
         raise HTTPException(
-            status_code=400, detail="Only PDF and DOCX files are supported"
+            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
         )
 
     if len(await file.read()) > settings.MAX_FILE_SIZE:
