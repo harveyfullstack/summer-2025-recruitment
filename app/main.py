@@ -13,6 +13,7 @@ from app.services.document_analysis import DocumentAnalysisService
 from app.services.fraud_scorer import FraudScoringService
 from app.core.validation import FileValidator
 from app.core.rate_limiter import limiter, rate_limit_handler
+from app.core.cache import cache
 from slowapi.errors import RateLimitExceeded
 
 app = FastAPI(
@@ -66,7 +67,8 @@ async def analyze_ai_content_only(request: Request, file: UploadFile = File(...)
 
 
 @app.post("/api/v1/examine/document")
-async def examine_document_only(file: UploadFile = File(...)):
+@limiter.limit("10/minute")
+async def examine_document_only(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
     document_data = await DocumentProcessor.extract_text_and_metadata(
         file_content, file.filename
@@ -79,7 +81,8 @@ async def examine_document_only(file: UploadFile = File(...)):
 
 
 @app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
-async def detect_resume_fraud(file: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
 
     try:
