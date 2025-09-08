@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+
+# Environment
+.env
+
+# Development
+TODO.md
+tmp_rovodev_*
+
+# IDE
+.vscode/
+.DS_Store
