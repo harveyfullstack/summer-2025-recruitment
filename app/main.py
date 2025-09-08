@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from app.models.schemas import (
     HealthResponse,
     FraudDetectionResult,
@@ -12,6 +12,8 @@ from app.services.ai_detection import AIContentDetectionService
 from app.services.document_analysis import DocumentAnalysisService
 from app.services.fraud_scorer import FraudScoringService
 from app.core.validation import FileValidator
+from app.core.rate_limiter import limiter, rate_limit_handler
+from slowapi.errors import RateLimitExceeded
 
 app = FastAPI(
     title="Resume Fraud Detection System",
