@@ -85,6 +85,10 @@ async def examine_document_only(request: Request, file: UploadFile = File(...)):
 async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
     file_content = await FileValidator.validate_file(file)
 
+    cached_result = cache.get_document_result(file_content)
+    if cached_result:
+        return FraudDetectionResult(**cached_result)
+
     try:
         document_data = await DocumentProcessor.extract_text_and_metadata(
             file_content, file.filename
@@ -112,7 +116,7 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
             contact_result, ai_result, document_result
         )
 
-        return FraudDetectionResult(
+        result = FraudDetectionResult(
             overall_risk_score=fraud_result["overall_risk_score"],
             risk_level=fraud_result["risk_level"],
             confidence=fraud_result["confidence"],
@@ -121,6 +125,9 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
             ai_content_analysis=ai_content_analysis,
             document_analysis=document_analysis,
         )
+
+        cache.cache_document_result(file_content, result.dict())
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
