@@ -6,6 +6,7 @@ class Settings:
     WINSTON_AI_API_KEY: str = config("WINSTON_AI_API_KEY", default="")
     SECRET_KEY: str = config("SECRET_KEY", default="dev-secret-key")
     DEBUG: bool = config("DEBUG", default=False, cast=bool)
+    DOCS_ENABLED: bool = config("DOCS_ENABLED", default=False, cast=bool)
 
     MAX_FILE_SIZE: int = 10485760
     ALLOWED_FILE_TYPES = ["pdf", "docx", "txt"]

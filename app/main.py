@@ -14,14 +14,15 @@ from app.services.fraud_scorer import FraudScoringService
 from app.core.validation import FileValidator
 from app.core.rate_limiter import limiter, rate_limit_handler
 from app.core.cache import cache
+from app.core.config import settings
 from slowapi.errors import RateLimitExceeded
 
 app = FastAPI(
     title="Resume Fraud Detection System",
     description="AI-powered resume fraud detection system with contact verification, AI content detection, and document authenticity analysis",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if settings.DOCS_ENABLED else None,
+    redoc_url="/redoc" if settings.DOCS_ENABLED else None,
 )
 
 app.state.limiter = limiter
