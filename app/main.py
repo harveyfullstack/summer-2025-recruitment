@@ -30,6 +30,62 @@ async def health_check():
     return HealthResponse(status="healthy")
 
 
+@app.post("/api/v1/verify/contact")
+async def verify_contact_only(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith((".pdf", ".docx")):
+        raise HTTPException(
+            status_code=400, detail="Only PDF and DOCX files are supported"
+        )
+
+    file_content = await file.read()
+    document_data = await DocumentProcessor.extract_text_and_metadata(
+        file_content, file.filename
+    )
+
+    contact_service = ContactVerificationService()
+    result = await contact_service.verify_contact_info(document_data["text"])
+    await contact_service.close()
+
+    return ContactVerificationResult(**result)
+
+
+@app.post("/api/v1/analyze/content")
+async def analyze_ai_content_only(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith((".pdf", ".docx")):
+        raise HTTPException(
+            status_code=400, detail="Only PDF and DOCX files are supported"
+        )
+
+    file_content = await file.read()
+    document_data = await DocumentProcessor.extract_text_and_metadata(
+        file_content, file.filename
+    )
+
+    ai_service = AIContentDetectionService()
+    result = await ai_service.detect_ai_content(document_data["text"])
+    await ai_service.close()
+
+    return AIContentResult(**result)
+
+
+@app.post("/api/v1/examine/document")
+async def examine_document_only(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith((".pdf", ".docx")):
+        raise HTTPException(
+            status_code=400, detail="Only PDF and DOCX files are supported"
+        )
+
+    file_content = await file.read()
+    document_data = await DocumentProcessor.extract_text_and_metadata(
+        file_content, file.filename
+    )
+
+    result = DocumentAnalysisService.analyze_document_authenticity(
+        document_data["metadata"]
+    )
+    return DocumentAnalysisResult(**result)
+
+
 @app.post("/api/v1/detect/resume", response_model=FraudDetectionResult)
 async def detect_resume_fraud(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".pdf", ".docx")):
