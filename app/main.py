@@ -46,12 +46,7 @@ async def verify_contact_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/analyze/content")
 async def analyze_ai_content_only(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
-        raise HTTPException(
-            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
-        )
-
-    file_content = await file.read()
+    file_content = await FileValidator.validate_file(file)
     document_data = await DocumentProcessor.extract_text_and_metadata(
         file_content, file.filename
     )
@@ -65,12 +60,7 @@ async def analyze_ai_content_only(file: UploadFile = File(...)):
 
 @app.post("/api/v1/examine/document")
 async def examine_document_only(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".pdf", ".docx", ".txt")):
-        raise HTTPException(
-            status_code=400, detail="Only PDF, DOCX, and TXT files are supported"
-        )
-
-    file_content = await file.read()
+    file_content = await FileValidator.validate_file(file)
     document_data = await DocumentProcessor.extract_text_and_metadata(
         file_content, file.filename
     )
