@@ -121,7 +121,7 @@ class ContactVerificationService:
             "disposable": False,
             "deliverable": local_valid,
             "quality_score": 0.5 if local_valid else 0.0,
-        }
+        }, False
 
     async def _verify_phone(self, phone: str) -> tuple[Dict[str, Any], bool]:
         try:
@@ -154,6 +154,9 @@ class ContactVerificationService:
         return {"valid": local_valid, "country": country, "carrier": None}, False
 
     async def _verify_ip_location(self, ip_address: str) -> tuple[Dict[str, Any], bool]:
+        if not settings.ABSTRACT_IP_API_KEY:
+            return self._fallback_ip_result(ip_address), False
+
         try:
             response = await self.client.get(
                 settings.ABSTRACT_IP_API,

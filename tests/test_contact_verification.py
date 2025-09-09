@@ -8,7 +8,13 @@ class TestContactVerificationService:
     async def test_verify_contact_info_no_api_key(self):
         service = ContactVerificationService()
 
-        with patch("app.services.contact_verification.settings.ABSTRACT_API_KEY", ""):
+        with patch(
+            "app.services.contact_verification.settings.ABSTRACT_EMAIL_API_KEY", ""
+        ), patch(
+            "app.services.contact_verification.settings.ABSTRACT_PHONE_API_KEY", ""
+        ), patch(
+            "app.services.contact_verification.settings.ABSTRACT_IP_API_KEY", ""
+        ):
             result = await service.verify_contact_info(
                 "John Doe john@example.com (555) 123-4567"
             )
@@ -25,7 +31,9 @@ class TestContactVerificationService:
     async def test_email_verification_fallback(self):
         service = ContactVerificationService()
 
-        with patch("app.services.contact_verification.settings.ABSTRACT_API_KEY", ""):
+        with patch(
+            "app.services.contact_verification.settings.ABSTRACT_EMAIL_API_KEY", ""
+        ):
             email_result, api_used = await service._verify_email("test@example.com")
 
         assert isinstance(email_result, dict)
@@ -41,7 +49,10 @@ class TestContactVerificationService:
     async def test_phone_verification_fallback(self):
         service = ContactVerificationService()
 
-        phone_result, api_used = await service._verify_phone("(555) 123-4567")
+        with patch(
+            "app.services.contact_verification.settings.ABSTRACT_PHONE_API_KEY", ""
+        ):
+            phone_result, api_used = await service._verify_phone("(555) 123-4567")
 
         assert isinstance(phone_result, dict)
         assert isinstance(api_used, bool)
@@ -55,7 +66,10 @@ class TestContactVerificationService:
     async def test_ip_verification_fallback(self):
         service = ContactVerificationService()
 
-        ip_result, api_used = await service._verify_ip_location("192.168.1.1")
+        with patch(
+            "app.services.contact_verification.settings.ABSTRACT_IP_API_KEY", ""
+        ):
+            ip_result, api_used = await service._verify_ip_location("192.168.1.1")
 
         assert isinstance(ip_result, dict)
         assert isinstance(api_used, bool)
