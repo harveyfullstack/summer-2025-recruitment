@@ -5,13 +5,13 @@ from app.core.config import settings
 
 
 class AIContentDetectionService:
+    MAX_TEXT_LENGTH = 5000
+
     def __init__(self):
         self.client = httpx.AsyncClient()
 
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
-        if len(text.strip()) < 300:
-            text = text + " " * (300 - len(text.strip()))
-
+        text = self._prepare_text(text)
         ai_probability, used_api = await self._analyze_text(text)
 
         confidence = 0.9 if used_api else 0.3
@@ -85,6 +85,17 @@ class AIContentDetectionService:
                 generic_score += 0.1
 
         return min(ai_score + (generic_score * 0.5), 1.0)
+
+    def _prepare_text(self, text: str) -> str:
+        text = text.strip()
+
+        if len(text) > self.MAX_TEXT_LENGTH:
+            text = text[: self.MAX_TEXT_LENGTH]
+
+        if len(text) < 300:
+            text = text + " " * (300 - len(text))
+
+        return text
 
     async def close(self):
         await self.client.aclose()
