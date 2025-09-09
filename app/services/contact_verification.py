@@ -39,7 +39,7 @@ class ContactVerificationService:
             if phone_api_used:
                 api_success_count += 1
 
-        if client_ip and settings.ABSTRACT_API_KEY:
+        if client_ip and settings.ABSTRACT_IP_API_KEY:
             ip_result, ip_api_used = await self._verify_ip_location(client_ip)
             total_api_calls += 1
             if ip_api_used:
@@ -158,7 +158,7 @@ class ContactVerificationService:
             response = await self.client.get(
                 settings.ABSTRACT_IP_API,
                 params={
-                    "api_key": settings.ABSTRACT_API_KEY,
+                    "api_key": settings.ABSTRACT_IP_API_KEY,
                     "ip_address": ip_address,
                     "fields": "country_code,is_vpn,connection,threat,abuse_confidence",
                 },
