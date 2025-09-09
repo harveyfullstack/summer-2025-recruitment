@@ -48,11 +48,20 @@ class FraudScoringService:
             else 0.0
         )
 
+        explanation = FraudScoringService._generate_explanation(
+            overall_risk_score, risk_level, detected_issues
+        )
+        recommendations = FraudScoringService._generate_recommendations(
+            risk_level, detected_issues
+        )
+
         return {
             "overall_risk_score": overall_risk_score,
             "risk_level": risk_level,
             "confidence": overall_confidence,
             "detected_issues": detected_issues,
+            "explanation": explanation,
+            "recommendations": recommendations,
             "contact_verification": contact_result,
             "ai_content_analysis": ai_result,
             "document_analysis": document_result,
@@ -102,3 +111,40 @@ class FraudScoringService:
             issues.append(f"AI-generated content detected in {section} section")
 
         return issues
+
+    @staticmethod
+    def _generate_explanation(
+        score: float, risk_level: RiskLevel, issues: List[str]
+    ) -> str:
+        if risk_level == RiskLevel.LOW:
+            return f"Low fraud risk detected (score: {score:.3f}). Resume appears legitimate with minimal suspicious indicators."
+        elif risk_level == RiskLevel.MEDIUM:
+            return f"Medium fraud risk detected (score: {score:.3f}). Several suspicious patterns identified requiring additional verification."
+        else:
+            return f"High fraud risk detected (score: {score:.3f}). Multiple fraud indicators present, recommend thorough investigation."
+
+    @staticmethod
+    def _generate_recommendations(
+        risk_level: RiskLevel, issues: List[str]
+    ) -> List[str]:
+        recommendations = []
+
+        if risk_level == RiskLevel.LOW:
+            recommendations.append("Proceed with standard hiring process")
+            if issues:
+                recommendations.append("Consider minor verification of flagged items")
+        elif risk_level == RiskLevel.MEDIUM:
+            recommendations.append("Conduct additional verification before proceeding")
+            recommendations.append("Verify contact information independently")
+            if any("AI-generated" in issue for issue in issues):
+                recommendations.append(
+                    "Request clarification on resume content authenticity"
+                )
+        else:
+            recommendations.append("Recommend thorough background investigation")
+            recommendations.append("Verify all claims independently")
+            recommendations.append(
+                "Consider rejecting application pending investigation"
+            )
+
+        return recommendations

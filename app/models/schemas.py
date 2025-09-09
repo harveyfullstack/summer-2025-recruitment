@@ -64,6 +64,12 @@ class FraudDetectionResult(BaseModel):
     detected_issues: List[str] = Field(
         default=[], description="List of specific fraud indicators found"
     )
+    explanation: str = Field(
+        default="", description="Human-readable explanation of the risk assessment"
+    )
+    recommendations: List[str] = Field(
+        default=[], description="Recommended actions based on the analysis"
+    )
     contact_verification: Optional[ContactVerificationResult] = Field(
         None, description="Contact information verification results"
     )
