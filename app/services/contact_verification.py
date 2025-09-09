@@ -123,7 +123,7 @@ class ContactVerificationService:
             "quality_score": 0.5 if local_valid else 0.0,
         }
 
-    async def _verify_phone(self, phone: str) -> Dict[str, Any]:
+    async def _verify_phone(self, phone: str) -> tuple[Dict[str, Any], bool]:
         try:
             parsed = phonenumbers.parse(phone, "US")
             local_valid = phonenumbers.is_valid_number(parsed)
@@ -133,7 +133,7 @@ class ContactVerificationService:
             country = None
 
         if not settings.ABSTRACT_API_KEY:
-            return {"valid": local_valid, "country": country, "carrier": None}
+            return {"valid": local_valid, "country": country, "carrier": None}, False
 
         try:
             response = await self.client.get(
@@ -147,7 +147,7 @@ class ContactVerificationService:
                     "valid": data.get("valid", False),
                     "country": data.get("country", {}).get("code"),
                     "carrier": data.get("carrier"),
-                }
+                }, True
         except Exception:
             pass
 
