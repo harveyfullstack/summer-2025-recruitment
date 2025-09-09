@@ -75,6 +75,9 @@ DOCS_ENABLED=True  # Enable API documentation at /docs
 # Start the API server
 uvicorn app.main:app --reload --port 8000
 
+# Run live demonstration (Recommended)
+python demo.py
+
 # Test the system
 python test_api.py
 
@@ -82,7 +85,21 @@ python test_api.py
 python run_tests.py
 ```
 
-### 4. API Usage
+### 4. Live Demonstration
+
+**Recommended**: Run the enhanced demonstration to see the system in action:
+
+```bash
+python demo.py
+```
+
+This provides:
+- **Technical Analysis**: Detailed breakdown of weighted algorithm (40%/35%/25%)
+- **Comparative Intelligence**: Cross-file pattern analysis and format-based insights
+- **API Integration Showcase**: Fallback mechanisms and error handling demonstration
+- **Production Readiness**: Performance metrics and reliability analysis
+
+### 5. API Usage
 
 The system provides both individual service endpoints and comprehensive fraud detection:
 
