@@ -110,84 +110,97 @@ curl -X POST "http://localhost:8000/api/v1/examine/document" -F "file=@resume.pd
 - **Performance**: In-memory caching, rate limiting, and async processing
 - **Security**: Input validation, file sanitization, and controlled API documentation
 
-### Deliverables
+### Weighted Risk Scoring Algorithm
 
-1. **Working Code**
-   - Complete Python implementation
-   - Requirements.txt or poetry.lock file
-   - Configuration files for API keys and settings
+The system uses a sophisticated weighted scoring approach:
 
-2. **Setup Instructions**
-   - Clear installation and configuration steps
-   - Example usage commands
-   - Sample input/output demonstrations
+```python
+# Risk calculation weights
+Contact Verification: 40%    # Highest weight - hard to fake
+AI Content Detection: 35%    # High weight - detects modern fraud  
+Document Authenticity: 25%   # Supporting weight - metadata analysis
 
-3. **Documentation**
-   - Technical architecture overview
-   - Detailed explanation of detection algorithms
-   - Rationale for chosen tools and approaches
-   - Known limitations and potential improvements
+# Risk levels
+Low Risk:    0.0 - 0.39 (Green)
+Medium Risk: 0.40 - 0.69 (Yellow)  
+High Risk:   0.70 - 1.0 (Red)
+```
 
-4. **Analysis Report**
-   - Summary of implemented features
-   - Effectiveness assessment of each detection method
-   - Discussion of false positive/negative considerations
-   - Recommendations for production deployment
+### API Endpoints
 
-## Evaluation Criteria
+| Endpoint | Method | Description | Rate Limit |
+|----------|--------|-------------|------------|
+| `/health` | GET | System health check | None |
+| `/api/v1/detect/resume` | POST | Complete fraud analysis | 5/minute |
+| `/api/v1/verify/contact` | POST | Contact verification only | 10/minute |
+| `/api/v1/analyze/content` | POST | AI content detection only | 10/minute |
+| `/api/v1/examine/document` | POST | Document analysis only | 10/minute |
+| `/docs` | GET | Interactive API documentation | None* |
 
-### Code Quality (30%)
-- Clean, readable, and well-structured code
-- Proper error handling and edge case management
-- Appropriate use of design patterns and best practices
-- Comprehensive testing approach
+*API documentation requires `DOCS_ENABLED=True` in environment
 
-### Technical Implementation (25%)
-- Effectiveness of fraud detection algorithms
-- Integration quality with external services
-- Performance considerations and optimization
-- Security best practices
+### Response Format
 
-### Innovation & Approach (25%)
-- Creative problem-solving techniques
-- Novel detection methods or combinations
-- Thoughtful selection of tools and APIs
-- Scalability considerations
+All detection endpoints return structured JSON with confidence scores:
 
-### Documentation & Usability (20%)
-- Clear setup and usage instructions
-- Thorough technical documentation
-- Quality of analysis and recommendations
-- Practical applicability
+```json
+{
+  "overall_risk_score": 0.46,
+  "risk_level": "medium", 
+  "confidence": 0.83,
+  "detected_issues": [
+    "Invalid email format detected",
+    "Suspicious document metadata"
+  ],
+  "contact_verification": { "risk_score": 0.8, "confidence": 0.9 },
+  "ai_content_analysis": { "overall_ai_probability": 0.02, "confidence": 0.85 },
+  "document_analysis": { "risk_score": 0.3, "confidence": 0.7 },
+  "analysis_timestamp": "2024-01-15T10:30:00Z"
+}
+```
 
-## Constraints & Guidelines
+## Performance & Security
 
-- **Time Limit**: 3 days from project start
-- **External Dependencies**: Any APIs, libraries, or tools are permitted
-- **Privacy & Ethics**: Ensure compliance with data protection regulations
-- **Honor System**: Work independently; collaboration is not permitted
+### Performance Features
+- **Async Processing**: Concurrent API calls for faster analysis
+- **Intelligent Caching**: 30-minute TTL for repeated document analysis
+- **Rate Limiting**: Prevents abuse while ensuring fair usage
+- **Fallback Mechanisms**: Graceful degradation when external APIs fail
 
+### Security Implementation
+- **Input Validation**: File type, size, and encoding verification
+- **Sanitization**: Secure file processing with automatic cleanup
+- **API Security**: Controlled documentation access and rate limiting
+- **Privacy Compliance**: In-memory processing with no persistent storage
 
-## Getting Started
+### Supported File Formats
+- **PDF**: Full metadata extraction and text analysis
+- **DOCX**: Microsoft Word document processing
+- **TXT**: Plain text resume analysis
 
-1. Fork or download this repository
-2. Set up your development environment
-3. Review the requirements and plan your approach
-4. Begin implementation with your chosen detection methods
-5. Document your process and findings as you work
+## Technology Stack
 
-## Questions?
+- **Framework**: FastAPI 0.104.1 with async support
+- **Document Processing**: PyMuPDF (PDF), python-docx (DOCX)
+- **External APIs**: Abstract API suite, Winston AI
+- **Performance**: slowapi (rate limiting), in-memory caching
+- **Testing**: pytest with 34 comprehensive tests
+- **Security**: File validation, input sanitization
 
-I'm more than happy to help! Feel free to reach out to Paul at paul@validia.ai with any questions or clarifications needed.
+## API Keys Required
 
-## Additional Notes
+To use the full functionality, obtain API keys from:
 
-- Consider rate limiting when working with external APIs
-- Implement appropriate caching mechanisms for efficiency
-- Think about how this system would scale in production
-- Balance detection accuracy with processing speed
-- Consider the user experience for both legitimate and flagged candidates
+1. **Abstract API** (3 separate keys needed):
+   - Email Validation API: https://app.abstractapi.com/api/email-validation
+   - Phone Validation API: https://app.abstractapi.com/api/phone-validation  
+   - IP Geolocation API: https://app.abstractapi.com/api/ip-geolocation
 
----
+2. **Winston AI**:
+   - AI Content Detection: https://gowinston.ai/
 
-**Important**: This challenge assesses both your technical skills and your ability to think like a security-minded engineer. Focus on creating a solution that would be valuable in a real-world hiring scenario.
+**Note**: The system works without API keys using intelligent fallback mechanisms, but with reduced accuracy.
+
+## License
+
+This project is developed as a technical assessment for Validia.
