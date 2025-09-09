@@ -145,5 +145,26 @@ class AIContentDetectionService:
 
         return weighted_sum / total_weight if total_weight > 0 else 0.0
 
+    def _calculate_confidence(
+        self, section_results: Dict[str, float], winston_api_used: bool
+    ) -> float:
+        base_confidence = 0.9 if winston_api_used else 0.6
+
+        if not section_results:
+            return base_confidence * 0.5
+
+        score_variance = 0.0
+        if len(section_results) > 1:
+            scores = list(section_results.values())
+            mean_score = sum(scores) / len(scores)
+            score_variance = sum((score - mean_score) ** 2 for score in scores) / len(
+                scores
+            )
+
+        consistency_factor = max(0.7, 1.0 - score_variance)
+        section_count_factor = min(1.0, len(section_results) / 3.0)
+
+        return base_confidence * consistency_factor * section_count_factor
+
     async def close(self):
         await self.client.aclose()
