@@ -20,23 +20,42 @@ class ContactVerificationService:
         phone_result = None
         ip_result = None
 
+        api_success_count = 0
+        total_api_calls = 0
+
         if contact_info.get("email"):
-            email_result = await self._verify_email(contact_info["email"])
+            email_result, email_api_used = await self._verify_email(
+                contact_info["email"]
+            )
+            total_api_calls += 1
+            if email_api_used:
+                api_success_count += 1
 
         if contact_info.get("phone"):
-            phone_result = await self._verify_phone(contact_info["phone"])
+            phone_result, phone_api_used = await self._verify_phone(
+                contact_info["phone"]
+            )
+            total_api_calls += 1
+            if phone_api_used:
+                api_success_count += 1
 
         if client_ip and settings.ABSTRACT_API_KEY:
-            ip_result = await self._verify_ip_location(client_ip)
+            ip_result, ip_api_used = await self._verify_ip_location(client_ip)
+            total_api_calls += 1
+            if ip_api_used:
+                api_success_count += 1
 
         risk_score = self._calculate_contact_risk(email_result, phone_result, ip_result)
+        confidence = self._calculate_verification_confidence(
+            api_success_count, total_api_calls
+        )
 
         return {
             "email_verification": email_result,
             "phone_verification": phone_result,
             "ip_verification": ip_result,
             "risk_score": risk_score,
-            "confidence": 0.8,
+            "confidence": confidence,
         }
 
     def _extract_contact_info(self, text: str) -> Dict[str, str]:
