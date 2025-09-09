@@ -16,6 +16,11 @@ class AIContentDetectionService:
 
         for section_name, section_text in sections.items():
             if len(section_text.strip()) > 50:
+                if len(section_text.strip()) < 300:
+                    section_text = section_text + " " * (
+                        300 - len(section_text.strip())
+                    )
+
                 ai_probability, used_api = await self._analyze_section(section_text)
                 section_results[section_name] = ai_probability
                 total_sections_analyzed += 1
