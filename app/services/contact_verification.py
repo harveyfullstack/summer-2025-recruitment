@@ -11,11 +11,14 @@ class ContactVerificationService:
     def __init__(self):
         self.client = httpx.AsyncClient()
 
-    async def verify_contact_info(self, text: str) -> Dict[str, Any]:
+    async def verify_contact_info(
+        self, text: str, client_ip: str = None
+    ) -> Dict[str, Any]:
         contact_info = self._extract_contact_info(text)
 
         email_result = None
         phone_result = None
+        ip_result = None
 
         if contact_info.get("email"):
             email_result = await self._verify_email(contact_info["email"])
@@ -23,11 +26,15 @@ class ContactVerificationService:
         if contact_info.get("phone"):
             phone_result = await self._verify_phone(contact_info["phone"])
 
-        risk_score = self._calculate_contact_risk(email_result, phone_result)
+        if client_ip and settings.ABSTRACT_API_KEY:
+            ip_result = await self._verify_ip_location(client_ip)
+
+        risk_score = self._calculate_contact_risk(email_result, phone_result, ip_result)
 
         return {
             "email_verification": email_result,
             "phone_verification": phone_result,
+            "ip_verification": ip_result,
             "risk_score": risk_score,
             "confidence": 0.8,
         }
