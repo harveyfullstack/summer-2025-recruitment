@@ -1,0 +1,266 @@
+title: Resume Fraud Detection System Architecture {
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+direction: down
+
+# Client Layer
+client: {
+  shape: person
+  label: Client
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1976D2"
+  }
+}
+
+# API Gateway Layer
+api_gateway: {
+  label: FastAPI Gateway
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#7B1FA2"
+  }
+  
+  rate_limiter: {
+    label: Rate Limiter\n(5/min, 10/min)
+    shape: diamond
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#F57C00"
+    }
+  }
+  
+  file_validator: {
+    label: File Validator\n(PDF, DOCX, TXT)
+    shape: hexagon
+    style: {
+      fill: "#E8F5E8"
+      stroke: "#388E3C"
+    }
+  }
+}
+
+# Document Processing Layer
+doc_processor: {
+  label: Document Processor
+  shape: cylinder
+  style: {
+    fill: "#E8F5E8"
+    stroke: "#388E3C"
+  }
+  
+  pdf_extractor: PyMuPDF
+  docx_extractor: python-docx
+  txt_processor: Native Parser
+}
+
+# Core Services Layer
+core_services: {
+  label: Detection Services
+  style: {
+    fill: "#F5F5F5"
+    stroke: "#424242"
+    stroke-width: 2
+  }
+  
+  contact_service: {
+    label: Contact Verification\nService
+    shape: rectangle
+    style: {
+      fill: "#E1F5FE"
+      stroke: "#0277BD"
+    }
+    
+    email_verify: Email Validation
+    phone_verify: Phone Validation  
+    ip_verify: IP Geolocation
+  }
+  
+  ai_service: {
+    label: AI Content Detection\nService
+    shape: rectangle
+    style: {
+      fill: "#FCE4EC"
+      stroke: "#C2185B"
+    }
+    
+    section_parser: Section Parser
+    ai_analyzer: AI Analyzer
+    fallback_detector: Fallback Detector
+  }
+  
+  document_service: {
+    label: Document Analysis\nService
+    shape: rectangle
+    style: {
+      fill: "#F3E5F5"
+      stroke: "#7B1FA2"
+    }
+    
+    metadata_analyzer: Metadata Forensics
+    template_detector: Template Detection
+    authenticity_checker: Authenticity Analysis
+  }
+  
+  fraud_scorer: {
+    label: Fraud Scoring\nService
+    shape: rectangle
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#D32F2F"
+    }
+    
+    risk_calculator: |md
+      **Weighted Algorithm:**
+      - Contact: 40%
+      - AI Content: 35%  
+      - Document: 25%
+    |
+    
+    confidence_calc: Confidence Calculator
+    explanation_gen: Explanation Generator
+  }
+}
+
+# External APIs
+external_apis: {
+  label: External APIs
+  style: {
+    fill: "#FFF8E1"
+    stroke: "#F57F17"
+    stroke-width: 2
+  }
+  
+  abstract_api: {
+    label: Abstract API Suite
+    shape: cloud
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1976D2"
+    }
+    
+    email_api: Email Validation API
+    phone_api: Phone Validation API
+    ip_api: IP Geolocation API
+  }
+  
+  winston_ai: {
+    label: Winston AI
+    shape: cloud
+    style: {
+      fill: "#FCE4EC"
+      stroke: "#C2185B"
+    }
+    
+    content_detection: AI Content Detection API
+  }
+}
+
+# Cache & Performance Layer
+cache_layer: {
+  label: Performance Layer
+  style: {
+    fill: "#F1F8E9"
+    stroke: "#689F38"
+  }
+  
+  cache: {
+    label: In-Memory Cache
+    shape: cylinder
+    style: {
+      fill: "#E8F5E8"
+      stroke: "#388E3C"
+    }
+    
+    cache_stats: |md
+      **Features:**
+      - MD5 document hashing
+      - 30-minute TTL
+      - Hit/miss tracking
+    |
+  }
+}
+
+# Data Flow Connections
+client -> api_gateway: "Upload Resume\n(PDF/DOCX/TXT)"
+
+api_gateway.rate_limiter -> api_gateway.file_validator: "Rate Check"
+api_gateway.file_validator -> doc_processor: "Validated File"
+
+doc_processor -> core_services.contact_service: "Extracted Text"
+doc_processor -> core_services.ai_service: "Extracted Text"
+doc_processor -> core_services.document_service: "File Metadata"
+
+# External API connections
+core_services.contact_service -> external_apis.abstract_api: "Verify Contact Info"
+core_services.ai_service -> external_apis.winston_ai: "Detect AI Content"
+
+# Cache connections
+core_services -> cache_layer.cache: "Check Cache"
+cache_layer.cache -> core_services: "Cached Result"
+
+# Scoring flow
+core_services.contact_service -> core_services.fraud_scorer: "Contact Risk"
+core_services.ai_service -> core_services.fraud_scorer: "AI Probability"
+core_services.document_service -> core_services.fraud_scorer: "Document Risk"
+
+core_services.fraud_scorer -> api_gateway: "Final Risk Assessment"
+api_gateway -> client: |md
+  **JSON Response:**
+  - Overall risk score
+  - Risk level (LOW/MEDIUM/HIGH)
+  - Confidence score
+  - Detected issues
+  - Explanations & recommendations
+|
+
+
+# Technical Specifications
+tech_specs: {
+  near: bottom-left
+  shape: text
+  style: {
+    font-size: 11
+    fill: "#E8F5E8"
+    stroke: "#388E3C"
+  }
+  
+  label: |md
+    **System Architecture:**
+    - Framework: FastAPI 0.104.1 (Python 3.11+)
+    - Processing: Async/await with httpx
+    - Validation: Pydantic schemas
+    - Testing: 34 comprehensive tests
+    
+    **Performance:**
+    - Concurrent API processing
+    - 30-minute result caching
+    - Rate limiting per endpoint
+    - Graceful API degradation
+  |
+}
+
+# Security annotations
+security_note: |md
+  **Security Features:**
+  - File size limits (10MB)
+  - Type validation
+  - Input sanitization
+  - API key isolation
+  - Rate limiting
+| {
+  near: bottom-right
+  shape: text
+  style: {
+    font-size: 12
+    fill: "#FFEBEE"
+    stroke: "#D32F2F"
+  }
+}
