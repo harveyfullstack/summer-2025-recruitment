@@ -136,9 +136,15 @@ class ContactVerificationService:
             if not email_result.get("valid", True):
                 risk += 0.3
             if email_result.get("disposable", False):
-                risk += 0.4
+                risk += 0.5
             if not email_result.get("deliverable", True):
                 risk += 0.2
+
+            quality_score = email_result.get("quality_score", 0.5)
+            if quality_score < 0.3:
+                risk += 0.3
+            elif quality_score < 0.6:
+                risk += 0.1
 
         if phone_result:
             if not phone_result.get("valid", True):
