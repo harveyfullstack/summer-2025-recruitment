@@ -187,6 +187,75 @@ All detection endpoints return structured JSON with confidence scores:
 - **Testing**: pytest with 34 comprehensive tests
 - **Security**: File validation, input sanitization
 
+## Technical Architecture
+
+### Detection Algorithm Design
+
+#### Weighted Risk Scoring
+The system uses a mathematically weighted approach to combine multiple fraud indicators:
+
+```
+Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
+```
+
+**Rationale**: Contact verification provides the strongest fraud signal (40%) as fake contact information is the most common indicator. AI content detection (35%) catches sophisticated resume generation. Document analysis (25%) identifies template abuse and metadata anomalies.
+
+#### Contact Information Verification
+- **Email validation**: Format validation, deliverability checking, disposable email detection
+- **Phone verification**: International format validation, carrier identification, geographic consistency
+- **IP geolocation**: VPN/Tor detection, threat intelligence, geographic correlation
+- **Fallback strategy**: Local validation when APIs unavailable, maintains functionality
+
+#### AI Content Detection
+- **Primary**: Winston AI API for professional-grade detection with 300+ character requirements
+- **Fallback**: Pattern-based detection using linguistic markers and generic phrase analysis
+- **Section analysis**: Resume parsed into summary, experience, skills, education for targeted detection
+- **Confidence weighting**: API success rate tracked for proportional confidence calculation
+
+#### Document Authenticity Analysis
+- **Metadata forensics**: Creation/modification timestamps, author information, software signatures
+- **Template detection**: Generic titles, rapid creation patterns, missing authorship
+- **Format analysis**: Suspicious formatting patterns, embedded object analysis
+
+### API Integration Strategy
+
+#### External Service Architecture
+- **Abstract API Suite**: Separate keys for email, phone, IP services for granular control
+- **Winston AI**: Professional content detection with intelligent text padding for minimum requirements
+- **Async processing**: Concurrent API calls with proper timeout and error handling
+- **Rate limiting compliance**: Intelligent request pacing to respect API limits
+
+#### Graceful Degradation
+- **API failure handling**: Local fallbacks maintain core functionality
+- **Confidence adjustment**: Proportional confidence based on actual API success rates
+- **Error isolation**: Single API failure doesn't compromise entire analysis
+
+### System Design Decisions
+
+#### Performance Optimization
+- **Caching strategy**: MD5-based document hashing for result caching with 30-minute TTL
+- **Async pipeline**: Concurrent API calls reduce total processing time
+- **Rate limiting**: 5/min for comprehensive analysis, 10/min for individual services
+
+#### Security Implementation
+- **File validation**: Size limits (10MB), type restrictions, encoding verification
+- **Input sanitization**: Text extraction with encoding fallbacks
+- **API key isolation**: Separate configuration for each external service
+- **Documentation control**: Production-safe API docs (disabled by default)
+
+### Tool Selection Rationale
+
+#### External API Choices
+- **Abstract API Suite**: Enterprise-grade fraud detection APIs with comprehensive coverage (email, phone, IP). Chosen for reliability, accuracy, and separate service granularity.
+- **Winston AI**: Professional AI content detection with high accuracy rates. Selected over OpenAI's detector due to better API stability and commercial licensing.
+- **FastAPI**: High-performance async framework with automatic OpenAPI documentation. Optimal for API-heavy workloads with concurrent external calls.
+
+#### Architecture Decisions
+- **Modular services**: Separate classes for each detection method enable independent testing and maintenance
+- **Async processing**: External API calls are I/O bound, async provides significant performance gains
+- **Weighted scoring**: Mathematical approach provides consistent, explainable risk assessment
+- **Graceful degradation**: System remains functional without external APIs, critical for production reliability
+
 ## API Keys Required
 
 To use the full functionality, obtain API keys from:
