@@ -7,7 +7,6 @@ class Settings:
     ABSTRACT_PHONE_API_KEY: str = config("ABSTRACT_PHONE_API_KEY", default="")
     ABSTRACT_IP_API_KEY: str = config("ABSTRACT_IP_API_KEY", default="")
     WINSTON_AI_API_KEY: str = config("WINSTON_AI_API_KEY", default="")
-    SECRET_KEY: str = config("SECRET_KEY", default="dev-secret-key")
     DEBUG: bool = config("DEBUG", default=False, cast=bool)
     DOCS_ENABLED: bool = config("DOCS_ENABLED", default=False, cast=bool)
 

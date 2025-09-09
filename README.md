@@ -59,10 +59,10 @@ cp .env.example .env
 
 # Edit .env with your API keys
 # Required for full functionality:
-ABSTRACT_EMAIL_API_KEY=your_email_validation_key
-ABSTRACT_PHONE_API_KEY=your_phone_validation_key  
-ABSTRACT_IP_API_KEY=your_ip_geolocation_key
-WINSTON_AI_API_KEY=your_winston_ai_key
+ABSTRACT_EMAIL_API_KEY=your_email_validation_key_here
+ABSTRACT_PHONE_API_KEY=your_phone_validation_key_here  
+ABSTRACT_IP_API_KEY=your_ip_geolocation_key_here
+WINSTON_AI_API_KEY=your_winston_ai_key_here
 
 # Optional settings:
 DEBUG=True
