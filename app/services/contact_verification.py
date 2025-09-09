@@ -72,7 +72,7 @@ class ContactVerificationService:
             "phone": "".join(phones[0]) if phones else None,
         }
 
-    async def _verify_email(self, email: str) -> Dict[str, Any]:
+    async def _verify_email(self, email: str) -> tuple[Dict[str, Any], bool]:
         try:
             validate_email(email)
             local_valid = True
@@ -84,7 +84,7 @@ class ContactVerificationService:
                 "valid": local_valid,
                 "disposable": False,
                 "deliverable": local_valid,
-            }
+            }, False
 
         try:
             response = await self.client.get(
@@ -112,7 +112,7 @@ class ContactVerificationService:
                     "disposable": is_disposable,
                     "deliverable": is_deliverable,
                     "quality_score": quality_score,
-                }
+                }, True
         except Exception:
             pass
 
