@@ -25,18 +25,18 @@ class DocumentProcessor:
         doc = fitz.open(stream=file_content, filetype="pdf")
 
         text = ""
+        page_count = len(doc)
         for page in doc:
             text += page.get_text()
 
         metadata = doc.metadata
-
         doc.close()
 
         return {
             "text": text,
             "metadata": {
                 "format": "pdf",
-                "page_count": len(doc),
+                "page_count": page_count,
                 "creation_date": metadata.get("creationDate"),
                 "modification_date": metadata.get("modDate"),
                 "author": metadata.get("author"),
@@ -48,7 +48,9 @@ class DocumentProcessor:
 
     @staticmethod
     def _process_docx(file_content: bytes) -> Dict[str, Any]:
-        doc = Document(file_content)
+        from io import BytesIO
+
+        doc = Document(BytesIO(file_content))
 
         text = ""
         for paragraph in doc.paragraphs:
