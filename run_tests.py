@@ -19,8 +19,8 @@ def run_tests():
         return True
 
     except subprocess.CalledProcessError as e:
-        print(result.stdout)
-        print(result.stderr)
+        print(e.stdout if e.stdout else "No stdout")
+        print(e.stderr if e.stderr else "No stderr")
         print("✗ Some tests failed!")
         return False
 
