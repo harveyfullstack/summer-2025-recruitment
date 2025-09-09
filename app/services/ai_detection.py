@@ -11,21 +11,30 @@ class AIContentDetectionService:
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
         sections = self._split_into_sections(text)
         section_results = {}
-        winston_api_used = False
+        winston_api_success_count = 0
+        total_sections_analyzed = 0
 
         for section_name, section_text in sections.items():
             if len(section_text.strip()) > 50:
                 ai_probability, used_api = await self._analyze_section(section_text)
                 section_results[section_name] = ai_probability
+                total_sections_analyzed += 1
                 if used_api:
-                    winston_api_used = True
+                    winston_api_success_count += 1
 
         overall_probability = self._calculate_overall_probability(section_results)
         suspicious_sections = [
             name for name, prob in section_results.items() if prob > 0.7
         ]
 
-        confidence = self._calculate_confidence(section_results, winston_api_used)
+        winston_api_success_rate = (
+            winston_api_success_count / total_sections_analyzed
+            if total_sections_analyzed > 0
+            else 0.0
+        )
+        confidence = self._calculate_confidence(
+            section_results, winston_api_success_rate
+        )
 
         return {
             "overall_ai_probability": overall_probability,
@@ -146,9 +155,9 @@ class AIContentDetectionService:
         return weighted_sum / total_weight if total_weight > 0 else 0.0
 
     def _calculate_confidence(
-        self, section_results: Dict[str, float], winston_api_used: bool
+        self, section_results: Dict[str, float], winston_api_success_rate: float
     ) -> float:
-        base_confidence = 0.9 if winston_api_used else 0.6
+        base_confidence = 0.6 + (0.3 * winston_api_success_rate)
 
         if not section_results:
             return base_confidence * 0.5
