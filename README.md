@@ -31,48 +31,84 @@ This system implements **3 comprehensive detection mechanisms** (exceeding the m
 - **File format support**: PDF, DOCX, and TXT with comprehensive validation
 - **Security-minded processing** with size limits and encoding validation
 
-## Requirements
+## Quick Start
 
-### Core Functionality
+### 1. Environment Setup
 
-Your solution must implement **at least 2** of the following detection mechanisms:
+```bash
+# Ensure Python 3.11+ is installed
+python --version  # Should be 3.11+
 
-#### 1. Contact Information Verification
-- Validate phone numbers, email addresses, and other contact details
-- Check for disposable/temporary email services
-- Analyze geographic consistency of phone numbers and addresses
-- **Suggested Tools**: IPQS API, Abstract API, or similar fraud detection services
+# Clone the repository
+git clone <repository-url>
+cd resume-fraud-detector
 
-#### 2. AI Content Detection
-- Identify sections of resumes that may have been generated using AI tools (ChatGPT, etc.)
-- Analyze writing patterns, style consistency, and linguistic markers
-- **Suggested Tools**: OpenAI's detection tools, custom ML models, or third-party AI detection APIs
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-#### 3. Professional Background Verification
-- Cross-reference claimed employment history with publicly available information
-- Verify educational credentials against institution databases
-- Check for consistency in professional timeline and career progression
-- **Suggested Tools**: LinkedIn scraping, company websites, educational institution APIs
+# Install dependencies
+pip install -r requirements.txt
+```
 
-#### 4. Digital Footprint Analysis
-- Search for online presence and cross-reference with resume claims
-- Identify suspicious social media profiles or lack thereof
-- Analyze consistency between online persona and professional claims
-- **Suggested Tools**: Social media APIs, search engines, professional networking sites
+### 2. Configuration
 
-#### 5. Document Authenticity
-- Analyze resume formatting and metadata for signs of template abuse
-- Check for common fraudulent resume patterns
-- Validate document creation timestamps and modification history
+```bash
+# Copy environment template
+cp .env.example .env
 
-### Technical Requirements
+# Edit .env with your API keys
+# Required for full functionality:
+ABSTRACT_EMAIL_API_KEY=your_email_validation_key
+ABSTRACT_PHONE_API_KEY=your_phone_validation_key  
+ABSTRACT_IP_API_KEY=your_ip_geolocation_key
+WINSTON_AI_API_KEY=your_winston_ai_key
 
-- **Language**: Python 3.11+
-- **Architecture**: Modular design with clear separation of concerns
-- **Input**: Accept resume files in common formats (PDF, DOCX)
-- **Output**: Structured fraud risk assessment with confidence scores
-- **Documentation**: Clear setup instructions and API documentation
-- **Error Handling**: Graceful handling of API failures and edge cases
+# Optional settings:
+DEBUG=True
+DOCS_ENABLED=True  # Enable API documentation at /docs
+```
+
+### 3. Run the System
+
+```bash
+# Start the API server
+uvicorn app.main:app --reload --port 8000
+
+# Test the system
+python test_api.py
+
+# Run comprehensive tests
+python run_tests.py
+```
+
+### 4. API Usage
+
+The system provides both individual service endpoints and comprehensive fraud detection:
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Complete fraud detection
+curl -X POST "http://localhost:8000/api/v1/detect/resume" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@sample_resume.pdf"
+
+# Individual services
+curl -X POST "http://localhost:8000/api/v1/verify/contact" -F "file=@resume.pdf"
+curl -X POST "http://localhost:8000/api/v1/analyze/content" -F "file=@resume.pdf"  
+curl -X POST "http://localhost:8000/api/v1/examine/document" -F "file=@resume.pdf"
+```
+
+## Technical Architecture
+
+### System Design
+- **Framework**: FastAPI with async support for high-performance concurrent processing
+- **Detection Pipeline**: Modular services with weighted risk scoring algorithm
+- **External APIs**: Abstract API suite + Winston AI with intelligent fallback mechanisms
+- **Performance**: In-memory caching, rate limiting, and async processing
+- **Security**: Input validation, file sanitization, and controlled API documentation
 
 ### Deliverables
 
