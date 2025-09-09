@@ -68,17 +68,34 @@ class ContactVerificationService:
 
             if response.status_code == 200:
                 data = response.json()
+
+                if "error" in data:
+                    return self._fallback_email_result(local_valid)
+
+                is_valid_format = self._extract_boolean(data, "is_valid_format")
+                is_smtp_valid = self._extract_boolean(data, "is_smtp_valid")
+                is_disposable = self._extract_boolean(data, "is_disposable_email")
+                deliverability = data.get("deliverability", "UNKNOWN")
+                quality_score = float(data.get("quality_score", 0.0))
+
+                is_valid = is_valid_format and is_smtp_valid
+                is_deliverable = deliverability in ["DELIVERABLE", "RISKY"]
+
                 return {
-                    "valid": data.get("is_valid_format", {}).get("value", False),
-                    "disposable": data.get("is_disposable_email", {}).get(
-                        "value", False
-                    ),
-                    "deliverable": data.get("deliverability", "") == "DELIVERABLE",
+                    "valid": is_valid,
+                    "disposable": is_disposable,
+                    "deliverable": is_deliverable,
+                    "quality_score": quality_score,
                 }
         except Exception:
             pass
 
-        return {"valid": local_valid, "disposable": False, "deliverable": local_valid}
+        return {
+            "valid": local_valid,
+            "disposable": False,
+            "deliverable": local_valid,
+            "quality_score": 0.5 if local_valid else 0.0,
+        }
 
     async def _verify_phone(self, phone: str) -> Dict[str, Any]:
         try:
@@ -128,6 +145,24 @@ class ContactVerificationService:
                 risk += 0.3
 
         return min(risk, 1.0)
+
+    def _extract_boolean(self, data: Dict, key: str) -> bool:
+        value = data.get(key)
+        if isinstance(value, bool):
+            return value
+        elif isinstance(value, dict):
+            return value.get("value", False)
+        elif isinstance(value, str):
+            return value.upper() == "TRUE"
+        return False
+
+    def _fallback_email_result(self, local_valid: bool) -> Dict[str, Any]:
+        return {
+            "valid": local_valid,
+            "disposable": False,
+            "deliverable": local_valid,
+            "quality_score": 0.5 if local_valid else 0.0,
+        }
 
     async def close(self):
         await self.client.aclose()
