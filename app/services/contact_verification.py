@@ -79,7 +79,7 @@ class ContactVerificationService:
         except EmailNotValidError:
             local_valid = False
 
-        if not settings.ABSTRACT_API_KEY:
+        if not settings.ABSTRACT_EMAIL_API_KEY:
             return {
                 "valid": local_valid,
                 "disposable": False,
@@ -89,7 +89,7 @@ class ContactVerificationService:
         try:
             response = await self.client.get(
                 settings.ABSTRACT_EMAIL_API,
-                params={"api_key": settings.ABSTRACT_API_KEY, "email": email},
+                params={"api_key": settings.ABSTRACT_EMAIL_API_KEY, "email": email},
             )
 
             if response.status_code == 200:
@@ -132,13 +132,13 @@ class ContactVerificationService:
             local_valid = False
             country = None
 
-        if not settings.ABSTRACT_API_KEY:
+        if not settings.ABSTRACT_PHONE_API_KEY:
             return {"valid": local_valid, "country": country, "carrier": None}, False
 
         try:
             response = await self.client.get(
                 settings.ABSTRACT_PHONE_API,
-                params={"api_key": settings.ABSTRACT_API_KEY, "phone": phone},
+                params={"api_key": settings.ABSTRACT_PHONE_API_KEY, "phone": phone},
             )
 
             if response.status_code == 200:
