@@ -151,9 +151,9 @@ class ContactVerificationService:
         except Exception:
             pass
 
-        return {"valid": local_valid, "country": country, "carrier": None}
+        return {"valid": local_valid, "country": country, "carrier": None}, False
 
-    async def _verify_ip_location(self, ip_address: str) -> Dict[str, Any]:
+    async def _verify_ip_location(self, ip_address: str) -> tuple[Dict[str, Any], bool]:
         try:
             response = await self.client.get(
                 settings.ABSTRACT_IP_API,
@@ -180,11 +180,11 @@ class ContactVerificationService:
                     "is_tor": threat.get("is_tor", False),
                     "threat_level": threat.get("threat_level", "unknown"),
                     "abuse_confidence": threat.get("abuse_confidence", 0),
-                }
+                }, True
         except Exception:
             pass
 
-        return self._fallback_ip_result(ip_address)
+        return self._fallback_ip_result(ip_address), False
 
     def _fallback_ip_result(self, ip_address: str) -> Dict[str, Any]:
         return {
@@ -235,6 +235,17 @@ class ContactVerificationService:
                 risk += 0.2
 
         return min(risk, 1.0)
+
+    def _calculate_verification_confidence(
+        self, api_success_count: int, total_api_calls: int
+    ) -> float:
+        if total_api_calls == 0:
+            return 0.5
+
+        api_success_rate = api_success_count / total_api_calls
+        base_confidence = 0.5 + (0.4 * api_success_rate)
+
+        return base_confidence
 
     def _extract_boolean(self, data: Dict, key: str) -> bool:
         value = data.get(key)
