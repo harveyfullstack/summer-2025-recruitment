@@ -85,14 +85,14 @@ class AIContentDetectionService:
                 data = response.json()
 
                 if "error" in data or data.get("status") != 200:
-                    return self._basic_ai_detection(text)
+                    return self._basic_ai_detection(text), False
 
                 ai_score = float(data.get("score", 0.0))
-                return ai_score / 100.0
+                return ai_score / 100.0, True
         except Exception:
             pass
 
-        return self._basic_ai_detection(text)
+        return self._basic_ai_detection(text), False
 
     def _basic_ai_detection(self, text: str) -> float:
         ai_indicators = [
