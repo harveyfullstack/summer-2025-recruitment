@@ -68,12 +68,22 @@ class AIContentDetectionService:
                     "Authorization": f"Bearer {settings.WINSTON_AI_API_KEY}",
                     "Content-Type": "application/json",
                 },
-                json={"text": text, "version": "3.0"},
+                json={
+                    "text": text,
+                    "version": "latest",
+                    "sentences": False,
+                    "language": "en",
+                },
             )
 
             if response.status_code == 200:
                 data = response.json()
-                return data.get("score", 0.0)
+
+                if "error" in data or data.get("status") != 200:
+                    return self._basic_ai_detection(text)
+
+                ai_score = float(data.get("score", 0.0))
+                return ai_score / 100.0
         except Exception:
             pass
 
