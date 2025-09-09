@@ -9,74 +9,19 @@ class AIContentDetectionService:
         self.client = httpx.AsyncClient()
 
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
-        sections = self._split_into_sections(text)
-        section_results = {}
-        winston_api_success_count = 0
-        total_sections_analyzed = 0
+        if len(text.strip()) < 300:
+            text = text + " " * (300 - len(text.strip()))
 
-        for section_name, section_text in sections.items():
-            if len(section_text.strip()) > 50:
-                if len(section_text.strip()) < 300:
-                    section_text = section_text + " " * (
-                        300 - len(section_text.strip())
-                    )
+        ai_probability, used_api = await self._analyze_text(text)
 
-                ai_probability, used_api = await self._analyze_section(section_text)
-                section_results[section_name] = ai_probability
-                total_sections_analyzed += 1
-                if used_api:
-                    winston_api_success_count += 1
-
-        overall_probability = self._calculate_overall_probability(section_results)
-        suspicious_sections = [
-            name for name, prob in section_results.items() if prob > 0.7
-        ]
-
-        winston_api_success_rate = (
-            winston_api_success_count / total_sections_analyzed
-            if total_sections_analyzed > 0
-            else 0.0
-        )
-        confidence = self._calculate_confidence(
-            section_results, winston_api_success_rate
-        )
+        confidence = 0.9 if used_api else 0.3
 
         return {
-            "overall_ai_probability": overall_probability,
-            "sections_analyzed": section_results,
-            "suspicious_sections": suspicious_sections,
+            "overall_ai_probability": ai_probability,
             "confidence": confidence,
         }
 
-    def _split_into_sections(self, text: str) -> Dict[str, str]:
-        sections = {"summary": "", "experience": "", "skills": "", "education": ""}
-
-        lines = text.split("\n")
-        current_section = "summary"
-
-        for line in lines:
-            line_lower = line.lower().strip()
-
-            if any(
-                keyword in line_lower
-                for keyword in ["experience", "work history", "employment"]
-            ):
-                current_section = "experience"
-            elif any(
-                keyword in line_lower
-                for keyword in ["skills", "technical skills", "competencies"]
-            ):
-                current_section = "skills"
-            elif any(
-                keyword in line_lower for keyword in ["education", "academic", "degree"]
-            ):
-                current_section = "education"
-
-            sections[current_section] += line + "\n"
-
-        return sections
-
-    async def _analyze_section(self, text: str) -> tuple[float, bool]:
+    async def _analyze_text(self, text: str) -> tuple[float, bool]:
         if not settings.WINSTON_AI_API_KEY:
             return self._basic_ai_detection(text), False
 
@@ -140,45 +85,6 @@ class AIContentDetectionService:
                 generic_score += 0.1
 
         return min(ai_score + (generic_score * 0.5), 1.0)
-
-    def _calculate_overall_probability(
-        self, section_results: Dict[str, float]
-    ) -> float:
-        if not section_results:
-            return 0.0
-
-        weights = {"summary": 0.3, "experience": 0.4, "skills": 0.2, "education": 0.1}
-
-        weighted_sum = 0.0
-        total_weight = 0.0
-
-        for section, probability in section_results.items():
-            weight = weights.get(section, 0.1)
-            weighted_sum += probability * weight
-            total_weight += weight
-
-        return weighted_sum / total_weight if total_weight > 0 else 0.0
-
-    def _calculate_confidence(
-        self, section_results: Dict[str, float], winston_api_success_rate: float
-    ) -> float:
-        base_confidence = 0.6 + (0.3 * winston_api_success_rate)
-
-        if not section_results:
-            return base_confidence * 0.5
-
-        score_variance = 0.0
-        if len(section_results) > 1:
-            scores = list(section_results.values())
-            mean_score = sum(scores) / len(scores)
-            score_variance = sum((score - mean_score) ** 2 for score in scores) / len(
-                scores
-            )
-
-        consistency_factor = max(0.7, 1.0 - score_variance)
-        section_count_factor = min(1.0, len(section_results) / 3.0)
-
-        return base_confidence * consistency_factor * section_count_factor
 
     async def close(self):
         await self.client.aclose()
