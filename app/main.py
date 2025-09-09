@@ -154,7 +154,7 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
             document_analysis=document_analysis,
         )
 
-        cache.cache_document_result(file_content, result.dict())
+        cache.cache_document_result(file_content, result.model_dump())
         return result
 
     except Exception as e:
