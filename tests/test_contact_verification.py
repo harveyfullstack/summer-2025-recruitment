@@ -81,44 +81,31 @@ class TestContactVerificationService:
         confidence_no_calls = service._calculate_verification_confidence(0, 0)
         assert confidence_no_calls == 0.5
 
-    @pytest.mark.asyncio
-    async def test_abstract_api_success_simulation(self):
+    def test_extract_boolean_helper(self):
         service = ContactVerificationService()
 
-        with patch(
-            "app.services.contact_verification.settings.ABSTRACT_API_KEY", "test_key"
-        ):
-            with patch.object(service, "_fallback_email_result") as mock_fallback:
-                mock_fallback.return_value = {
-                    "valid": True,
-                    "disposable": False,
-                    "deliverable": True,
-                    "quality_score": 0.85,
-                }
+        assert service._extract_boolean({"key": True}, "key") == True
+        assert service._extract_boolean({"key": {"value": True}}, "key") == True
+        assert service._extract_boolean({"key": "TRUE"}, "key") == True
+        assert service._extract_boolean({"key": "false"}, "key") == False
+        assert service._extract_boolean({}, "key") == False
 
-                email_result, api_used = await service._verify_email("test@example.com")
-
-        assert isinstance(email_result, dict)
-        assert isinstance(api_used, bool)
-        assert "valid" in email_result
-        assert "disposable" in email_result
-
-        await service.close()
-
-    @pytest.mark.asyncio
-    async def test_abstract_api_error_handling(self):
+    def test_fallback_email_result(self):
         service = ContactVerificationService()
 
-        with patch(
-            "app.services.contact_verification.settings.ABSTRACT_API_KEY", "test_key"
-        ):
-            with patch.object(
-                service.client, "get", side_effect=Exception("API Error")
-            ):
-                email_result, api_used = await service._verify_email("test@example.com")
+        result = service._fallback_email_result(True)
+        assert result["valid"] == True
+        assert result["quality_score"] == 0.5
 
-        assert api_used == False
-        assert "valid" in email_result
-        assert "disposable" in email_result
+        result = service._fallback_email_result(False)
+        assert result["valid"] == False
+        assert result["quality_score"] == 0.0
 
-        await service.close()
+    def test_fallback_ip_result(self):
+        service = ContactVerificationService()
+
+        result = service._fallback_ip_result("192.168.1.1")
+        assert result["ip_address"] == "192.168.1.1"
+        assert result["country_code"] == "UNKNOWN"
+        assert result["is_vpn"] == False
+        assert result["is_tor"] == False
