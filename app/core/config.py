@@ -1,4 +1,5 @@
 from decouple import config
+import logging
 
 
 class Settings:

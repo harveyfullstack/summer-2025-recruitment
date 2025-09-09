@@ -2,6 +2,7 @@ import httpx
 import re
 from typing import Dict, Any, List
 from app.core.config import settings
+from app.core.api_error_handler import APIErrorHandler
 
 
 class AIContentDetectionService:
@@ -40,14 +41,18 @@ class AIContentDetectionService:
                 },
             )
 
-            if response.status_code == 200:
-                data = response.json()
+            success, error_info = APIErrorHandler.handle_api_response(
+                "Winston AI", response
+            )
+            if not success:
+                return self._basic_ai_detection(text), False
 
-                if "error" in data or data.get("status") != 200:
-                    return self._basic_ai_detection(text), False
+            data = response.json()
+            if "error" in data or data.get("status") != 200:
+                return self._basic_ai_detection(text), False
 
-                ai_score = float(data.get("score", 0.0))
-                return ai_score / 100.0, True
+            ai_score = float(data.get("score", 0.0))
+            return ai_score / 100.0, True
         except Exception:
             pass
 
