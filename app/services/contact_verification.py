@@ -96,7 +96,7 @@ class ContactVerificationService:
                 data = response.json()
 
                 if "error" in data:
-                    return self._fallback_email_result(local_valid)
+                    return self._fallback_email_result(local_valid), False
 
                 is_valid_format = self._extract_boolean(data, "is_valid_format")
                 is_smtp_valid = self._extract_boolean(data, "is_smtp_valid")
