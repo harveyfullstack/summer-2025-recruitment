@@ -14,7 +14,7 @@ class Settings:
     ABSTRACT_EMAIL_API = "https://emailvalidation.abstractapi.com/v1/"
     ABSTRACT_PHONE_API = "https://phonevalidation.abstractapi.com/v1/"
     ABSTRACT_IP_API = "https://ipgeolocation.abstractapi.com/v1/"
-    WINSTON_AI_API = "https://api.gowinston.ai/functions/v1/predict"
+    WINSTON_AI_API = "https://api.gowinston.ai/v2/ai-content-detection"
 
     CONTACT_WEIGHT = 0.40
     AI_CONTENT_WEIGHT = 0.35
