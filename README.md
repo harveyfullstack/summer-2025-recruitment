@@ -256,6 +256,25 @@ Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
 - **Weighted scoring**: Mathematical approach provides consistent, explainable risk assessment
 - **Graceful degradation**: System remains functional without external APIs, critical for production reliability
 
+### Known Limitations and Potential Improvements
+
+#### Current Limitations
+- **Professional background verification**: No LinkedIn or employment history cross-referencing
+- **Digital footprint analysis**: Limited social media presence validation
+- **Advanced AI detection**: Relies on Winston AI; no ensemble model approach
+- **Document format support**: Limited to PDF, DOCX, TXT (no RTF, ODT, or image-based resumes)
+- **Language support**: English-only content analysis and validation
+- **Real-time processing**: Synchronous API calls may impact response times under load
+
+#### Potential Improvements
+- **Enhanced AI detection**: Combine multiple AI detection services for higher accuracy
+- **Professional verification**: Integrate LinkedIn API or employment verification services
+- **Advanced document analysis**: OCR support for image-based resumes, deeper metadata forensics
+- **Machine learning**: Custom ML models trained on resume fraud patterns
+- **Performance optimization**: Redis caching, async queue processing for heavy workloads
+- **Security enhancements**: JWT authentication, request signing, audit logging
+- **Monitoring**: Comprehensive logging, metrics collection, alerting for production deployment
+
 ## API Keys Required
 
 To use the full functionality, obtain API keys from:
