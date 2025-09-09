@@ -1,5 +1,7 @@
 import asyncio
 import json
+import os
+import glob
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -9,11 +11,12 @@ def demonstrate_fraud_detection():
     print("=" * 60)
 
     client = TestClient(app)
-    sample_files = [
-        "samples/john_doe_resume.pdf",
-        "samples/john_doe_resume.docx",
-        "samples/john_doe_resume.txt",
-    ]
+
+    sample_files = []
+    for ext in ["*.pdf", "*.docx", "*.txt"]:
+        sample_files.extend(glob.glob(f"samples/{ext}"))
+
+    sample_files.sort()
 
     for file_path in sample_files:
         print(f"\n📄 Analyzing: {file_path}")
