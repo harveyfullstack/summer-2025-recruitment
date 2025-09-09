@@ -11,22 +11,27 @@ class AIContentDetectionService:
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
         sections = self._split_into_sections(text)
         section_results = {}
+        winston_api_used = False
 
         for section_name, section_text in sections.items():
             if len(section_text.strip()) > 50:
-                ai_probability = await self._analyze_section(section_text)
+                ai_probability, used_api = await self._analyze_section(section_text)
                 section_results[section_name] = ai_probability
+                if used_api:
+                    winston_api_used = True
 
         overall_probability = self._calculate_overall_probability(section_results)
         suspicious_sections = [
             name for name, prob in section_results.items() if prob > 0.7
         ]
 
+        confidence = self._calculate_confidence(section_results, winston_api_used)
+
         return {
             "overall_ai_probability": overall_probability,
             "sections_analyzed": section_results,
             "suspicious_sections": suspicious_sections,
-            "confidence": 0.85,
+            "confidence": confidence,
         }
 
     def _split_into_sections(self, text: str) -> Dict[str, str]:
@@ -57,9 +62,9 @@ class AIContentDetectionService:
 
         return sections
 
-    async def _analyze_section(self, text: str) -> float:
+    async def _analyze_section(self, text: str) -> tuple[float, bool]:
         if not settings.WINSTON_AI_API_KEY:
-            return self._basic_ai_detection(text)
+            return self._basic_ai_detection(text), False
 
         try:
             response = await self.client.post(
