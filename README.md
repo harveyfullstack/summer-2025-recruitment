@@ -8,7 +8,7 @@ A production-ready Python-based resume fraud detection system that identifies po
 
 ## Features Implemented
 
-This system implements **3 comprehensive detection mechanisms** (exceeding the minimum requirement of 2):
+This system implements **3 detection mechanisms** (exceeding the minimum requirement of 2):
 
 ### 1. Contact Information Verification ✅
 - **Email validation** with disposable email detection and quality scoring
@@ -112,7 +112,7 @@ curl -X POST "http://localhost:8000/api/v1/examine/document" -F "file=@resume.pd
 
 ### Weighted Risk Scoring Algorithm
 
-The system uses a sophisticated weighted scoring approach:
+The system uses a weighted scoring approach:
 
 ```python
 # Risk calculation weights
@@ -198,7 +198,7 @@ The system uses a mathematically weighted approach to combine multiple fraud ind
 Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
 ```
 
-**Rationale**: Contact verification provides the strongest fraud signal (40%) as fake contact information is the most common indicator. AI content detection (35%) catches sophisticated resume generation. Document analysis (25%) identifies template abuse and metadata anomalies.
+**Rationale**: Contact verification receives the highest weight (40%) as fake contact information is a common fraud indicator. AI content detection (35%) targets generated resume content. Document analysis (25%) identifies template abuse and metadata anomalies.
 
 #### Contact Information Verification
 - **Email validation**: Format validation, deliverability checking, disposable email detection
@@ -246,7 +246,7 @@ Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
 ### Tool Selection Rationale
 
 #### External API Choices
-- **Abstract API Suite**: Enterprise-grade fraud detection APIs with comprehensive coverage (email, phone, IP). Chosen for reliability, accuracy, and separate service granularity.
+- **Abstract API Suite**: Fraud detection APIs with coverage for email, phone, and IP verification. Chosen for reliability and separate service granularity.
 - **Winston AI**: Professional AI content detection with high accuracy rates. Selected over OpenAI's detector due to better API stability and commercial licensing.
 - **FastAPI**: High-performance async framework with automatic OpenAPI documentation. Optimal for API-heavy workloads with concurrent external calls.
 
