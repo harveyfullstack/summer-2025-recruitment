@@ -134,8 +134,54 @@ class ContactVerificationService:
 
         return {"valid": local_valid, "country": country, "carrier": None}
 
+    async def _verify_ip_location(self, ip_address: str) -> Dict[str, Any]:
+        try:
+            response = await self.client.get(
+                settings.ABSTRACT_IP_API,
+                params={
+                    "api_key": settings.ABSTRACT_API_KEY,
+                    "ip_address": ip_address,
+                    "fields": "country_code,is_vpn,connection,threat,abuse_confidence",
+                },
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+
+                if "error" in data:
+                    return self._fallback_ip_result(ip_address)
+
+                connection = data.get("connection", {})
+                threat = data.get("threat", {})
+
+                return {
+                    "ip_address": ip_address,
+                    "country_code": data.get("country_code", "UNKNOWN"),
+                    "is_vpn": connection.get("is_vpn", False),
+                    "is_tor": threat.get("is_tor", False),
+                    "threat_level": threat.get("threat_level", "unknown"),
+                    "abuse_confidence": threat.get("abuse_confidence", 0),
+                }
+        except Exception:
+            pass
+
+        return self._fallback_ip_result(ip_address)
+
+    def _fallback_ip_result(self, ip_address: str) -> Dict[str, Any]:
+        return {
+            "ip_address": ip_address,
+            "country_code": "UNKNOWN",
+            "is_vpn": False,
+            "is_tor": False,
+            "threat_level": "unknown",
+            "abuse_confidence": 0,
+        }
+
     def _calculate_contact_risk(
-        self, email_result: Optional[Dict], phone_result: Optional[Dict]
+        self,
+        email_result: Optional[Dict],
+        phone_result: Optional[Dict],
+        ip_result: Optional[Dict] = None,
     ) -> float:
         risk = 0.0
 
@@ -156,6 +202,18 @@ class ContactVerificationService:
         if phone_result:
             if not phone_result.get("valid", True):
                 risk += 0.3
+
+        if ip_result:
+            if ip_result.get("is_tor", False):
+                risk += 0.6
+            elif ip_result.get("is_vpn", False):
+                risk += 0.3
+
+            abuse_confidence = ip_result.get("abuse_confidence", 0)
+            if abuse_confidence > 50:
+                risk += 0.4
+            elif abuse_confidence > 25:
+                risk += 0.2
 
         return min(risk, 1.0)
 
