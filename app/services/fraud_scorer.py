@@ -34,18 +34,26 @@ class FraudScoringService:
         if document_result:
             detected_issues.extend(document_result.get("suspicious_patterns", []))
 
-        confidence_scores = []
+        weighted_confidence = 0.0
+        total_weight = 0.0
+
         if contact_result:
-            confidence_scores.append(contact_result.get("confidence", 0.0))
+            contact_confidence = contact_result.get("confidence", 0.0)
+            weighted_confidence += contact_confidence * settings.CONTACT_WEIGHT
+            total_weight += settings.CONTACT_WEIGHT
+
         if ai_result:
-            confidence_scores.append(ai_result.get("confidence", 0.0))
+            ai_confidence = ai_result.get("confidence", 0.0)
+            weighted_confidence += ai_confidence * settings.AI_CONTENT_WEIGHT
+            total_weight += settings.AI_CONTENT_WEIGHT
+
         if document_result:
-            confidence_scores.append(document_result.get("confidence", 0.0))
+            doc_confidence = document_result.get("confidence", 0.0)
+            weighted_confidence += doc_confidence * settings.DOCUMENT_WEIGHT
+            total_weight += settings.DOCUMENT_WEIGHT
 
         overall_confidence = (
-            sum(confidence_scores) / len(confidence_scores)
-            if confidence_scores
-            else 0.0
+            weighted_confidence / total_weight if total_weight > 0 else 0.0
         )
 
         explanation = FraudScoringService._generate_explanation(

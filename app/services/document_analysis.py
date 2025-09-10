@@ -36,7 +36,7 @@ class DocumentAnalysisService:
                     suspicious_patterns.append(
                         "Document created and modified within 1 minute"
                     )
-                    risk_score += 0.2
+                    risk_score += 0.3
 
                 authenticity_indicators["timestamp_consistency"] = time_diff > 60
 
@@ -55,7 +55,7 @@ class DocumentAnalysisService:
                     suspicious_patterns.append(
                         f"Suspicious creator software: {creator_software}"
                     )
-                    risk_score += 0.3
+                    risk_score += 0.4
                     break
 
             authenticity_indicators["creator_software"] = creator_software
@@ -63,7 +63,7 @@ class DocumentAnalysisService:
         author = metadata.get("author")
         if not author or author.strip() == "":
             suspicious_patterns.append("Missing or empty author information")
-            risk_score += 0.1
+            risk_score += 0.2
 
         authenticity_indicators["has_author"] = bool(author and author.strip())
 
@@ -80,7 +80,7 @@ class DocumentAnalysisService:
             title_lower = title.lower().strip()
             if any(generic in title_lower for generic in generic_titles):
                 suspicious_patterns.append("Generic document title")
-                risk_score += 0.1
+                risk_score += 0.15
 
         return {
             "authenticity_indicators": authenticity_indicators,

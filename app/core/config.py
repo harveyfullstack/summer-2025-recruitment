@@ -18,12 +18,12 @@ class Settings:
     ABSTRACT_IP_API = "https://ipgeolocation.abstractapi.com/v1/"
     WINSTON_AI_API = "https://api.gowinston.ai/v2/ai-content-detection"
 
-    CONTACT_WEIGHT = 0.40
+    CONTACT_WEIGHT = 0.45
     AI_CONTENT_WEIGHT = 0.35
-    DOCUMENT_WEIGHT = 0.25
+    DOCUMENT_WEIGHT = 0.20
 
-    HIGH_RISK_THRESHOLD = 0.70
-    MEDIUM_RISK_THRESHOLD = 0.40
+    HIGH_RISK_THRESHOLD = 0.60
+    MEDIUM_RISK_THRESHOLD = 0.35
 
 
 settings = Settings()
