@@ -223,7 +223,6 @@ static/                     # Frontend assets (optional)
 ├── index.html             # Web interface
 ├── style.css              # Styling
 ├── script.js              # JavaScript
-└── samples/               # Sample files for testing
 
 tests/                      # Comprehensive test suite (34 tests)
 main.py                     # Railway deployment entry point
