@@ -78,16 +78,14 @@ class ContactVerificationService:
 
     def _extract_contact_info(self, text: str) -> Dict[str, str]:
         email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-        phone_pattern = (
-            r"(\+?1?[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})"
-        )
+        phone_pattern = r"[\+]?[\d\s\-\(\)\.]{10,20}"
 
         emails = re.findall(email_pattern, text)
         phones = re.findall(phone_pattern, text)
 
         return {
             "email": emails[0] if emails else None,
-            "phone": "".join(phones[0]) if phones else None,
+            "phone": phones[0].strip() if phones else None,
         }
 
     def _is_test_phone_number(self, phone: str) -> bool:
