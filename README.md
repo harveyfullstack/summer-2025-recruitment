@@ -118,6 +118,34 @@ curl -X POST "http://localhost:8000/api/v1/analyze/content" -F "file=@resume.pdf
 curl -X POST "http://localhost:8000/api/v1/examine/document" -F "file=@resume.pdf"
 ```
 
+## Project Structure
+
+```
+app/
+├── core/                    # Core utilities and configuration
+│   ├── api_error_handler.py # Centralized error handling
+│   ├── cache.py            # In-memory caching system
+│   ├── config.py           # Environment configuration
+│   ├── rate_limiter.py     # API rate limiting
+│   └── validation.py       # File and input validation
+├── models/
+│   └── schemas.py          # Pydantic response models
+├── services/               # Business logic modules
+│   ├── ai_detection.py     # Winston AI integration
+│   ├── contact_verification.py # Abstract API integration
+│   ├── document_analysis.py    # Metadata analysis
+│   ├── document_processor.py   # PDF/DOCX text extraction
+│   └── fraud_scorer.py         # Risk scoring algorithm
+└── main.py                 # FastAPI application and routes
+
+tests/                      # Comprehensive test suite (34 tests)
+samples/                    # Test resume files (PDF, DOCX, TXT)
+main.py                     # Railway deployment entry point
+railway.json                # Production deployment configuration
+requirements.txt            # Python dependencies
+demo.py                     # Interactive demonstration
+```
+
 ## Technical Architecture
 
 ### System Design
