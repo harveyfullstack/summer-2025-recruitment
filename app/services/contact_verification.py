@@ -252,15 +252,44 @@ class ContactVerificationService:
         return self._fallback_ip_result(ip_address), False
 
     def _fallback_ip_result(self, ip_address: str) -> Dict[str, Any]:
+        is_suspicious = self._is_suspicious_ip_range(ip_address)
+
         return {
             "ip_address": ip_address,
             "country_code": "UNKNOWN",
-            "is_vpn": False,
+            "is_vpn": is_suspicious,
             "is_proxy": False,
             "is_tor": False,
             "threat_level": "unknown",
-            "abuse_confidence": 0,
+            "abuse_confidence": 25 if is_suspicious else 0,
         }
+
+    def _is_suspicious_ip_range(self, ip_address: str) -> bool:
+        try:
+            parts = ip_address.split(".")
+            if len(parts) != 4:
+                return True
+
+            octets = [int(part) for part in parts]
+
+            if (
+                octets[0] == 10
+                or (octets[0] == 172 and 16 <= octets[1] <= 31)
+                or (octets[0] == 192 and octets[1] == 168)
+                or octets[0] == 127
+            ):
+                return True
+
+            if (
+                octets[0] == 0
+                or octets[0] >= 224
+                or (octets[0] == 169 and octets[1] == 254)
+            ):
+                return True
+
+            return False
+        except (ValueError, IndexError):
+            return True
 
     def _calculate_contact_risk(
         self,
