@@ -252,6 +252,8 @@ demo.py                     # Interactive demonstration
 
 ## Technical Architecture
 
+![System Architecture](architecture.jpg)
+
 ### System Design
 - **Framework**: FastAPI with async support for high-performance concurrent processing
 - **Detection Pipeline**: Modular services with weighted risk scoring algorithm
