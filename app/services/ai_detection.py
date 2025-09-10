@@ -27,6 +27,7 @@ class AIContentDetectionService:
             "sections_analyzed": sections_analyzed,
             "suspicious_sections": suspicious_sections,
             "confidence": confidence,
+            "detection_method": "winston_ai" if used_api else "pattern_fallback",
         }
 
     async def _analyze_text(self, text: str) -> tuple[float, bool, Dict[str, Any]]:

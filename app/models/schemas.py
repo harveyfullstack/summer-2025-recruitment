@@ -42,6 +42,9 @@ class AIContentResult(BaseModel):
     confidence: float = Field(
         ge=0, le=1, description="Confidence level in the AI detection analysis"
     )
+    detection_method: str = Field(
+        description="Detection method used: 'winston_ai' or 'pattern_fallback'"
+    )
 
 
 class DocumentAnalysisResult(BaseModel):
