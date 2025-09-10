@@ -170,7 +170,7 @@ def demonstrate_fraud_detection():
 
     sample_files = []
     for ext in ["*.pdf", "*.docx", "*.txt"]:
-        sample_files.extend(glob.glob(f"samples/{ext}"))
+        sample_files.extend(glob.glob(f"static/samples/{ext}"))
 
     sample_files.sort()
 
