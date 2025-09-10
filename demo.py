@@ -21,9 +21,9 @@ def display_detailed_analysis(file_path, data):
     ai = data.get("ai_content_analysis", {})
     document = data.get("document_analysis", {})
 
-    print(f"\n📧 CONTACT VERIFICATION (Weight: 40%)")
+    print(f"\n📧 CONTACT VERIFICATION (Weight: 45%)")
     contact_risk = contact.get("risk_score", 0)
-    contact_contribution = contact_risk * 0.40
+    contact_contribution = contact_risk * 0.45
     print(
         f"   Risk Score: {contact_risk:.3f} → Contributes {contact_contribution:.3f} to total"
     )
@@ -51,9 +51,9 @@ def display_detailed_analysis(file_path, data):
     api_used = "API" if ai_confidence > 0.5 else "Local Fallback"
     print(f"   Detection Method: {api_used} (Confidence: {ai_confidence:.1%})")
 
-    print(f"\n📋 DOCUMENT AUTHENTICITY (Weight: 25%)")
+    print(f"\n📋 DOCUMENT AUTHENTICITY (Weight: 20%)")
     doc_risk = document.get("risk_score", 0)
-    doc_contribution = doc_risk * 0.25
+    doc_contribution = doc_risk * 0.20
     print(
         f"   Risk Score: {doc_risk:.3f} → Contributes {doc_contribution:.3f} to total"
     )
@@ -162,7 +162,7 @@ def demonstrate_fraud_detection():
     print("🔍 Resume Fraud Detection System - Live Demonstration")
     print("=" * 60)
     print("📋 Assessment Showcase: 3/5 Detection Methods Implemented")
-    print("🎯 Weighted Algorithm: Contact(40%) + AI(35%) + Document(25%)")
+    print("🎯 Weighted Algorithm: Contact(45%) + AI(35%) + Document(20%)")
     print("⚡ Features: API Integration, Graceful Fallbacks, Error Handling")
     print("=" * 60)
 
