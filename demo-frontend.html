@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Fraud Detection API Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        
+        select, button {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        select {
+            background: white;
+        }
+        
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-area:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+        
+        .upload-area.dragover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .test-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            height: fit-content;
+        }
+        
+        .test-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .test-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .samples {
+            padding: 15px 20px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .samples h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+        
+        .sample-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .sample-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .sample-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .results {
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .status-success {
+            color: #059669;
+            font-weight: 500;
+        }
+        
+        .status-error {
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
+        .response-container {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            border-top-color: #2563eb;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .sample-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Resume Fraud Detection API Demo</h1>
+            <p>Interactive testing interface for all API endpoints</p>
+        </div>
+        
+        <div class="controls">
+            <div class="form-group">
+                <label for="endpoint">API Endpoint</label>
+                <select id="endpoint">
+                    <option value="/api/v1/detect/resume">Complete Fraud Detection (5/min)</option>
+                    <option value="/api/v1/verify/contact">Contact Verification (10/min)</option>
+                    <option value="/api/v1/analyze/content">AI Content Detection (10/min)</option>
+                    <option value="/api/v1/examine/document">Document Analysis (10/min)</option>
+                    <option value="/health">Health Check</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Upload Resume File</label>
+                <div class="upload-area" id="uploadArea">
+                    <div>📄 Click or drag file here</div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">PDF, DOCX, TXT supported</div>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt">
+            </div>
+            
+            <button class="test-btn" id="testBtn" disabled>Test API</button>
+        </div>
+        
+        <div class="samples">
+            <h3>Quick Test Samples</h3>
+            <div class="sample-buttons">
+                <button class="sample-btn" data-file="john_doe_resume.txt">John Doe Resume</button>
+                <button class="sample-btn" data-file="john_doe_resume.pdf">John Doe PDF</button>
+                <button class="sample-btn" data-file="john_doe_resume.docx">John Doe DOCX</button>
+            </div>
+        </div>
+        
+        <div class="results">
+            <div class="status-bar" id="statusBar" style="display: none;">
+                <span id="statusText"></span>
+                <span id="responseTime"></span>
+            </div>
+            
+            <div id="responseContainer">
+                <div style="text-align: center; color: #6b7280; padding: 40px;">
+                    Select an endpoint and upload a file to test the API
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://resume-fraud-api-production.up.railway.app';
+        
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const testBtn = document.getElementById('testBtn');
+        const endpoint = document.getElementById('endpoint');
+        const statusBar = document.getElementById('statusBar');
+        const statusText = document.getElementById('statusText');
+        const responseTime = document.getElementById('responseTime');
+        const responseContainer = document.getElementById('responseContainer');
+        
+        let selectedFile = null;
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            selectedFile = file;
+            uploadArea.innerHTML = `
+                <div>📄 ${file.name}</div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">${(file.size / 1024).toFixed(1)} KB</div>
+            `;
+            updateTestButton();
+        }
+        
+        function updateTestButton() {
+            const isHealthCheck = endpoint.value === '/health';
+            testBtn.disabled = !isHealthCheck && !selectedFile;
+        }
+        
+        endpoint.addEventListener('change', updateTestButton);
+        
+        document.querySelectorAll('.sample-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const filename = btn.dataset.file;
+                try {
+                    const response = await fetch(`./samples/${filename}`);
+                    const blob = await response.blob();
+                    const file = new File([blob], filename, { type: blob.type });
+                    handleFileSelect(file);
+                } catch (error) {
+                    console.error('Failed to load sample file:', error);
+                }
+            });
+        });
+        
+        testBtn.addEventListener('click', async () => {
+            const endpointValue = endpoint.value;
+            const startTime = Date.now();
+            
+            statusBar.style.display = 'flex';
+            statusText.textContent = 'Testing...';
+            statusText.className = '';
+            responseTime.textContent = '';
+            
+            responseContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Making API request...
+                </div>
+            `;
+            
+            try {
+                let response;
+                
+                if (endpointValue === '/health') {
+                    response = await fetch(`${API_BASE}/health`);
+                } else {
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    
+                    response = await fetch(`${API_BASE}${endpointValue}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+                
+                const endTime = Date.now();
+                const responseTimeMs = endTime - startTime;
+                
+                const data = await response.json();
+                
+                statusText.textContent = `Status: ${response.status} ${response.statusText}`;
+                statusText.className = response.ok ? 'status-success' : 'status-error';
+                responseTime.textContent = `${(responseTimeMs / 1000).toFixed(2)}s`;
+                
+                responseContainer.innerHTML = `
+                    <div class="response-container">${JSON.stringify(data, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                const endTime = Date.now();
+                const responseTimeMs = endTime - startTime;
+                
+                statusText.textContent = 'Error: Request failed';
+                statusText.className = 'status-error';
+                responseTime.textContent = `${(responseTimeMs / 1000).toFixed(2)}s`;
+                
+                responseContainer.innerHTML = `
+                    <div class="response-container">Error: ${error.message}</div>
+                `;
+            }
+        });
+        
+        updateTestButton();
+    </script>
+</body>
+</html>
