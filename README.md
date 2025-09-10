@@ -136,7 +136,7 @@ The integrated web interface provides:
 - **No CORS Issues**: Same-origin requests for seamless operation
 
 The command line demo provides:
-- **Technical Analysis**: Detailed breakdown of weighted algorithm (40%/35%/25%)
+- **Technical Analysis**: Detailed breakdown of weighted algorithm (45%/35%/20%)
 - **Comparative Intelligence**: Cross-file pattern analysis and format-based insights
 - **API Integration Showcase**: Fallback mechanisms and error handling demonstration
 - **Production Readiness**: Performance metrics and reliability analysis
@@ -224,14 +224,14 @@ The system uses a weighted scoring approach:
 
 ```python
 # Risk calculation weights
-Contact Verification: 40%    # Highest weight - hard to fake
+Contact Verification: 45%    # Highest weight - hard to fake
 AI Content Detection: 35%    # High weight - detects modern fraud  
-Document Authenticity: 25%   # Supporting weight - metadata analysis
+Document Authenticity: 20%   # Supporting weight - metadata analysis
 
 # Risk levels
-Low Risk:    0.0 - 0.39 (Green)
-Medium Risk: 0.40 - 0.69 (Yellow)  
-High Risk:   0.70 - 1.0 (Red)
+Low Risk:    0.0 - 0.34 (Green)
+Medium Risk: 0.35 - 0.59 (Yellow)  
+High Risk:   0.60 - 1.0 (Red)
 ```
 
 ### API Endpoints
@@ -303,10 +303,10 @@ All detection endpoints return structured JSON with confidence scores:
 The system uses a mathematically weighted approach to combine multiple fraud indicators:
 
 ```
-Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
+Overall Risk = (Contact × 0.45) + (AI Content × 0.35) + (Document × 0.20)
 ```
 
-**Rationale**: Contact verification receives the highest weight (40%) as fake contact information is a common fraud indicator. AI content detection (35%) targets generated resume content. Document analysis (25%) identifies template abuse and metadata anomalies.
+**Rationale**: Contact verification receives the highest weight (45%) as fake contact information is a common fraud indicator. AI content detection (35%) targets generated resume content. Document analysis (20%) identifies template abuse and metadata anomalies.
 
 #### Contact Information Verification
 - **Email validation**: Format validation, deliverability checking, disposable email detection
