@@ -89,6 +89,10 @@ class AIContentDetectionService:
             if re.search(pattern, text_lower):
                 generic_score += 0.1
 
+        em_dash_count = len(re.findall(r"—\w", text))
+        if em_dash_count >= 3:
+            ai_score += 0.2
+
         return min(ai_score + (generic_score * 0.5), 1.0)
 
     def _prepare_text(self, text: str) -> str:
