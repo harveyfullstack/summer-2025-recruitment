@@ -14,7 +14,7 @@ from app.services.ai_detection import AIContentDetectionService
 from app.services.document_analysis import DocumentAnalysisService
 from app.services.fraud_scorer import FraudScoringService
 from app.core.validation import FileValidator
-from app.core.rate_limiter import limiter, rate_limit_handler
+from app.core.rate_limiter import limiter, rate_limit_handler, get_real_client_ip
 from app.core.cache import cache
 from app.core.config import settings
 from slowapi.errors import RateLimitExceeded
@@ -65,7 +65,7 @@ async def verify_contact_only(request: Request, file: UploadFile = File(...)):
     )
 
     contact_service = ContactVerificationService()
-    client_ip = request.client.host
+    client_ip = get_real_client_ip(request)
     result = await contact_service.verify_contact_info(document_data["text"], client_ip)
     await contact_service.close()
 
@@ -135,7 +135,7 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
         contact_service = ContactVerificationService()
         ai_service = AIContentDetectionService()
 
-        client_ip = request.client.host
+        client_ip = get_real_client_ip(request)
         contact_result = await contact_service.verify_contact_info(text, client_ip)
         ai_result = await ai_service.detect_ai_content(text)
         document_result = DocumentAnalysisService.analyze_document_authenticity(
