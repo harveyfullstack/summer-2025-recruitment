@@ -65,7 +65,8 @@ async def verify_contact_only(request: Request, file: UploadFile = File(...)):
     )
 
     contact_service = ContactVerificationService()
-    result = await contact_service.verify_contact_info(document_data["text"])
+    client_ip = request.client.host
+    result = await contact_service.verify_contact_info(document_data["text"], client_ip)
     await contact_service.close()
 
     return ContactVerificationResult(**result)
@@ -134,7 +135,8 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
         contact_service = ContactVerificationService()
         ai_service = AIContentDetectionService()
 
-        contact_result = await contact_service.verify_contact_info(text)
+        client_ip = request.client.host
+        contact_result = await contact_service.verify_contact_info(text, client_ip)
         ai_result = await ai_service.detect_ai_content(text)
         document_result = DocumentAnalysisService.analyze_document_authenticity(
             metadata

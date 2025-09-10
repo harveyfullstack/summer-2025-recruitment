@@ -208,7 +208,7 @@ class ContactVerificationService:
                 params={
                     "api_key": settings.ABSTRACT_IP_API_KEY,
                     "ip_address": ip_address,
-                    "fields": "country_code,is_vpn,connection,threat,abuse_confidence",
+                    "fields": "country_code,is_vpn,is_proxy,is_tor,connection,threat,abuse_confidence",
                 },
             )
 
@@ -228,8 +228,10 @@ class ContactVerificationService:
             return {
                 "ip_address": ip_address,
                 "country_code": data.get("country_code", "UNKNOWN"),
-                "is_vpn": connection.get("is_vpn", False),
-                "is_tor": threat.get("is_tor", False),
+                "is_vpn": connection.get("is_vpn", False) or data.get("is_vpn", False),
+                "is_proxy": connection.get("is_proxy", False)
+                or data.get("is_proxy", False),
+                "is_tor": threat.get("is_tor", False) or data.get("is_tor", False),
                 "threat_level": threat.get("threat_level", "unknown"),
                 "abuse_confidence": threat.get("abuse_confidence", 0),
             }, True
@@ -280,15 +282,25 @@ class ContactVerificationService:
 
         if ip_result:
             if ip_result.get("is_tor", False):
-                risk += 0.6
+                risk += 0.7
             elif ip_result.get("is_vpn", False):
-                risk += 0.3
+                risk += 0.4
+            elif ip_result.get("is_proxy", False):
+                risk += 0.2
 
             abuse_confidence = ip_result.get("abuse_confidence", 0)
-            if abuse_confidence > 50:
-                risk += 0.4
+            if abuse_confidence > 75:
+                risk += 0.5
+            elif abuse_confidence > 50:
+                risk += 0.3
             elif abuse_confidence > 25:
-                risk += 0.2
+                risk += 0.1
+
+            threat_level = ip_result.get("threat_level", "unknown")
+            if threat_level in ["high", "critical"]:
+                risk += 0.3
+            elif threat_level == "medium":
+                risk += 0.1
 
         return min(risk, 1.0)
 
