@@ -367,6 +367,26 @@ Overall Risk = (Contact × 0.40) + (AI Content × 0.35) + (Document × 0.25)
 
 **Assessment Conclusion**: This 3-day implementation provides a functional foundation for resume fraud detection. The unexpected AI detection results reveal the real-world complexity of this problem space and underscore why comprehensive solutions require multiple detection methods, extensive testing, and iterative refinement.
 
+## Production Deployment
+
+### Live API Endpoint
+**Production URL**: https://resume-fraud-api-production.up.railway.app
+
+The system is deployed on Railway with automatic SSL, health monitoring, and production-grade configuration.
+
+### Available Endpoints
+- `GET /health` - System health check
+- `POST /api/v1/detect/resume` - Complete fraud analysis (5/min rate limit)
+- `POST /api/v1/verify/contact` - Contact verification only (10/min rate limit)
+- `POST /api/v1/analyze/content` - AI content detection only (10/min rate limit)
+- `POST /api/v1/examine/document` - Document analysis only (10/min rate limit)
+
+### Deployment Architecture
+- **Platform**: Railway with Nixpacks auto-detection
+- **Runtime**: Python 3.11 with Uvicorn ASGI server
+- **Configuration**: Environment-based with production security settings
+- **Monitoring**: Health checks and structured logging enabled
+
 ## API Keys Required
 
 To use the full functionality, obtain API keys from:
