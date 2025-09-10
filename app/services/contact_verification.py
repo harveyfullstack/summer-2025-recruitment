@@ -53,12 +53,27 @@ class ContactVerificationService:
             api_success_count, total_api_calls
         )
 
+        verification_methods = []
+        if email_result and email_api_used:
+            verification_methods.append("abstract_email_api")
+        elif email_result:
+            verification_methods.append("local_email_validation")
+
+        if phone_result and phone_api_used:
+            verification_methods.append("abstract_phone_api")
+        elif phone_result:
+            verification_methods.append("local_phone_validation")
+
+        if ip_result and ip_api_used:
+            verification_methods.append("abstract_ip_api")
+
         return {
             "email_verification": email_result,
             "phone_verification": phone_result,
             "ip_verification": ip_result,
             "risk_score": risk_score,
             "confidence": confidence,
+            "verification_methods": verification_methods,
         }
 
     def _extract_contact_info(self, text: str) -> Dict[str, str]:

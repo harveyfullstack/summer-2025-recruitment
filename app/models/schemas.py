@@ -27,6 +27,10 @@ class ContactVerificationResult(BaseModel):
     confidence: float = Field(
         ge=0, le=1, description="Confidence level in the risk assessment"
     )
+    verification_methods: List[str] = Field(
+        default=[],
+        description="Methods used for verification: API calls vs local validation",
+    )
 
 
 class AIContentResult(BaseModel):
