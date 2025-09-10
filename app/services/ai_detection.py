@@ -3,6 +3,7 @@ import re
 from typing import Dict, Any, List
 from app.core.config import settings
 from app.core.api_error_handler import APIErrorHandler
+from app.core.sanitizer import InputSanitizer
 
 
 class AIContentDetectionService:
@@ -12,6 +13,7 @@ class AIContentDetectionService:
         self.client = httpx.AsyncClient()
 
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
+        text = InputSanitizer.sanitize_text(text, self.MAX_TEXT_LENGTH)
         text = self._prepare_text(text)
         ai_probability, used_api = await self._analyze_text(text)
 
