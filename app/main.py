@@ -1,4 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from app.models.schemas import (
     HealthResponse,
     FraudDetectionResult,
@@ -28,9 +30,16 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.get("/")
-async def root():
+async def serve_frontend():
+    return FileResponse("static/index.html")
+
+
+@app.get("/api")
+async def api_root():
     return {"message": "Resume Fraud Detection System", "status": "running"}
 
 

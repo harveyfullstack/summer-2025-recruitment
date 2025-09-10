@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Fraud Detection API Demo</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Resume Fraud Detection API Demo</h1>
+            <p>Interactive testing interface for all API endpoints</p>
+        </div>
+        
+        <div class="controls">
+            <div class="form-group">
+                <label for="endpoint">API Endpoint</label>
+                <select id="endpoint">
+                    <option value="/api/v1/detect/resume">Complete Fraud Detection (5/min)</option>
+                    <option value="/api/v1/verify/contact">Contact Verification (10/min)</option>
+                    <option value="/api/v1/analyze/content">AI Content Detection (10/min)</option>
+                    <option value="/api/v1/examine/document">Document Analysis (10/min)</option>
+                    <option value="/health">Health Check</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Upload Resume File</label>
+                <div class="upload-area" id="uploadArea">
+                    <div>📄 Click or drag file here</div>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">PDF, DOCX, TXT supported</div>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt">
+            </div>
+            
+            <button class="test-btn" id="testBtn" disabled>Test API</button>
+        </div>
+        
+        <div class="samples">
+            <h3>Quick Test Samples</h3>
+            <div class="sample-buttons">
+                <button class="sample-btn" data-file="john_doe_resume.txt">John Doe Resume</button>
+                <button class="sample-btn" data-file="john_doe_resume.pdf">John Doe PDF</button>
+                <button class="sample-btn" data-file="john_doe_resume.docx">John Doe DOCX</button>
+            </div>
+        </div>
+        
+        <div class="results">
+            <div class="status-bar" id="statusBar" style="display: none;">
+                <span id="statusText"></span>
+                <span id="responseTime"></span>
+            </div>
+            
+            <div id="responseContainer">
+                <div style="text-align: center; color: #6b7280; padding: 40px;">
+                    Select an endpoint and upload a file to test the API
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
