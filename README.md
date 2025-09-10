@@ -52,7 +52,7 @@ This system implements **3 detection mechanisms** (exceeding the minimum require
 ### 1. Contact Information Verification ✅
 - **Email validation** with disposable email detection and quality scoring
 - **Phone number validation** with international format support (190+ countries)
-- **IP geolocation analysis** with VPN/Tor detection and threat intelligence
+- **IP intelligence analysis** with VPN/Proxy/Tor detection and threat scoring
 - **Geographic consistency** analysis across contact methods
 - **Integration**: Abstract API suite with graceful fallback mechanisms
 
@@ -350,7 +350,7 @@ Overall Risk = (Contact × 0.45) + (AI Content × 0.35) + (Document × 0.20)
 #### Contact Information Verification
 - **Email validation**: Format validation, deliverability checking, disposable email detection
 - **Phone verification**: International format validation, carrier identification, geographic consistency
-- **IP geolocation**: VPN/Tor detection, threat intelligence, geographic correlation
+- **IP intelligence**: VPN/Proxy/Tor detection, threat level analysis, abuse confidence scoring
 - **Fallback strategy**: Local validation when APIs unavailable, maintains functionality
 
 #### AI Content Detection
@@ -427,7 +427,7 @@ Overall Risk = (Contact × 0.45) + (AI Content × 0.35) + (Document × 0.20)
 ### Implementation Summary
 
 **Detection Methods Implemented**: 3 of 5 (exceeds minimum requirement)
-- **Contact Information Verification**: Email validation, phone verification, IP geolocation analysis
+- **Contact Information Verification**: Email validation, phone verification, IP intelligence analysis
 - **AI Content Detection**: Winston AI integration with local fallback detection
 - **Document Authenticity**: Metadata forensics, template detection, creation timestamp analysis
 
