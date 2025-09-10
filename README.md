@@ -13,7 +13,7 @@ A production-ready Python-based resume fraud detection system that identifies po
 
 ### Local Setup (5 minutes)
 ```bash
-git clone <repository-url> && cd resume-fraud-detector
+git clone https://github.com/harveyfullstack/summer-2025-recruitment && cd resume-fraud-detector
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env  # Add API keys for full functionality
@@ -79,7 +79,7 @@ This system implements **3 detection mechanisms** (exceeding the minimum require
 python --version  # Should be 3.11+
 
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/harveyfullstack/summer-2025-recruitment
 cd resume-fraud-detector
 
 # Create and activate virtual environment
