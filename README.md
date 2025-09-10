@@ -80,13 +80,12 @@ uvicorn app.main:app --reload --port 8000
 
 **Frontend Only** (demo/presentation):
 ```bash
-# Option 1: Direct file open
-open demo-frontend.html
+# Use production deployment
+open https://resume-fraud-api-production.up.railway.app
 
-# Option 2: Local server (recommended)
-python -m http.server 8080
-# Visit: http://localhost:8080/demo-frontend.html
-# Uses production API: https://resume-fraud-api-production.up.railway.app
+# Or run locally with production API
+uvicorn app.main:app --reload --port 8000
+# Visit: http://localhost:8000
 ```
 
 **Full Development Setup** (backend + frontend):
