@@ -30,8 +30,6 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 @app.get("/")
 async def serve_frontend():
@@ -170,3 +168,6 @@ async def detect_resume_fraud(request: Request, file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
