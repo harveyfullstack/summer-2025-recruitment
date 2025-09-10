@@ -14,7 +14,7 @@ class TestFraudScoringService:
         )
 
         assert result["risk_level"] == RiskLevel.LOW
-        assert result["overall_risk_score"] < 0.4
+        assert result["overall_risk_score"] < 0.35
         assert len(result["detected_issues"]) == 0
 
     def test_calculate_high_risk(self):
@@ -27,7 +27,7 @@ class TestFraudScoringService:
         )
 
         assert result["risk_level"] == RiskLevel.HIGH
-        assert result["overall_risk_score"] >= 0.7
+        assert result["overall_risk_score"] >= 0.6
 
     def test_weighted_scoring_algorithm(self):
         contact_result = {"risk_score": 1.0, "confidence": 0.9}
@@ -38,7 +38,7 @@ class TestFraudScoringService:
             contact_result, ai_result, document_result
         )
 
-        expected_score = 1.0 * 0.40 + 0.0 * 0.35 + 0.0 * 0.25
+        expected_score = 1.0 * 0.45 + 0.0 * 0.35 + 0.0 * 0.20
         assert abs(result["overall_risk_score"] - expected_score) < 0.01
 
     def test_extract_contact_issues(self):

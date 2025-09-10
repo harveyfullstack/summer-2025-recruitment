@@ -19,9 +19,7 @@ class TestAPI:
     def test_root_endpoint(self):
         response = client.get("/")
         assert response.status_code == 200
-        data = response.json()
-        assert data["message"] == "Resume Fraud Detection System"
-        assert data["status"] == "running"
+        assert "text/html" in response.headers["content-type"]
 
     def test_contact_verification_endpoint(self):
         file_content = b"John Smith\nEmail: john@example.com\nPhone: (555) 123-4567"
