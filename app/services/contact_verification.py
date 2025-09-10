@@ -41,7 +41,7 @@ class ContactVerificationService:
             if phone_api_used:
                 api_success_count += 1
 
-        if client_ip and settings.ABSTRACT_IP_API_KEY:
+        if client_ip:
             sanitized_ip = InputSanitizer.sanitize_ip(client_ip)
             if sanitized_ip:
                 ip_result, ip_api_used = await self._verify_ip_location(sanitized_ip)
@@ -67,8 +67,11 @@ class ContactVerificationService:
         elif phone_result:
             verification_methods.append("local_phone_validation")
 
-        if ip_result and ip_api_used:
-            verification_methods.append("abstract_ip_api")
+        if ip_result:
+            if ip_api_used:
+                verification_methods.append("abstract_ip_api")
+            else:
+                verification_methods.append("local_ip_validation")
 
         return {
             "email_verification": email_result,
