@@ -88,17 +88,15 @@ uvicorn app.main:app --reload --port 8000
 # Visit: http://localhost:8000
 ```
 
-**Full Development Setup** (backend + frontend):
+**Full Development Setup** (integrated frontend + backend):
 ```bash
-# Terminal 1: Start backend
+# Single command serves both frontend and backend
 uvicorn app.main:app --reload --port 8000
 
-# Terminal 2: Start frontend
-python -m http.server 8080
-
-# Backend: http://localhost:8000
-# Frontend: http://localhost:8080/demo-frontend.html
-# (Edit demo-frontend.html API_BASE to use localhost:8000 for local API)
+# Access everything at: http://localhost:8000
+# Frontend interface: http://localhost:8000/
+# API endpoints: http://localhost:8000/api/v1/*
+# Health check: http://localhost:8000/health
 ```
 
 **Quick Validation**:
@@ -112,13 +110,14 @@ python run_tests.py
 
 ### 4. Live Demonstration
 
-**Option A - Interactive Frontend Demo** (Recommended for presentations):
+**Option A - Integrated Web Interface** (Recommended for presentations):
 ```bash
-# Open the minimal API testing interface
-open demo-frontend.html
-# Or serve locally:
-python -m http.server 8080
-# Then visit: http://localhost:8080/demo-frontend.html
+# Production deployment (frontend + backend unified)
+open https://resume-fraud-api-production.up.railway.app
+
+# Or run locally
+uvicorn app.main:app --reload --port 8000
+# Visit: http://localhost:8000
 ```
 
 **Option B - Command Line Demo**:
@@ -126,11 +125,13 @@ python -m http.server 8080
 python demo.py
 ```
 
-The frontend demo provides:
+The integrated web interface provides:
+- **Unified Architecture**: Frontend and backend served from single FastAPI application
 - **Interactive API Testing**: Upload files and test all endpoints in real-time
 - **Professional Interface**: Clean, responsive design perfect for demonstrations
 - **Live Results**: JSON responses with syntax highlighting and performance metrics
 - **Sample Files**: Quick-load buttons for immediate testing
+- **No CORS Issues**: Same-origin requests for seamless operation
 
 The command line demo provides:
 - **Technical Analysis**: Detailed breakdown of weighted algorithm (40%/35%/25%)
