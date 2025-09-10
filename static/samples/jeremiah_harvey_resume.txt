@@ -1,0 +1,52 @@
+﻿Jeremiah Harvey
+ Palm Beach Gardens, Florida, United States  harveyfullstack@gmail.com  (561) 215-1831  in/harveyfullstack
+
+EXPERIENCE
+Full-Stack Software Engineer & Founder | Cloakscreen Technologies, LLC
+February 2025 - Present, Remote, United States
+• Built a novel web technology to blind AI agents and AI-based cheating tools (Cluely, Interview Coder), incorporating methodologies from human perception and temporal motion constraints of hardware.
+• Introduced the world's first web protection against AI, combining DRM + browser EME APIs, with a "trap door" approach and no detriment to user accessibility or experience.
+Sr. Software Engineer (Contract) | The Walt Disney Company
+April 2024 - February 2025, Remote, United States
+• Implemented a three-tier recommendation engine with LightFM (CF library) incorporating weighted signals and progressive data enrichment via Snowflake- hosted interaction data (ride participation, guest preferences, and "must-dos"), achieving highly personalized recommendations and projecting significant revenue lift through increased guest spending.
+• Engineered a cruise recommendation model using PyTorch, TF-IDF, and semantic algorithms to deliver personalized itinerary suggestions based on
+Snowflake-derived guest preference patterns, creating a scalable ML solution anticipated to boost booking conversions.
+• Built a park analytics dashboard ingesting Snowflake-aggregated guest interactions to reveal attraction preferences and visualize traffic patterns, enabling operational planning and resource allocation.
+• Constructed an ETL pipeline using Airflow and Celery to transform raw guest data from Snowflake S3-staged tables into insights, enabling cross-park visitor behavior analysis.
+• Developed a data visualization application using Streamlit and NetworkX to map guest journey patterns, identifying clusters leveraging Snowflake-computed schemas and movement flows.
+• Led machine learning integration planning across business units, creating technical frameworks and Snowflake-aligned data share protocols for future
+production systems.
+Full-Stack Software Engineer | adMixt
+March 2023 - April 2024, Remote, United States
+• Engineered a precision-based model routing system that selectively directs queries to appropriate LLMs using Python services deployed on AWS Lambda, improving decision accuracy by 30%.
+• Implemented real-time data streaming architecture using AWS Kinesis and Firehose to capture and process advertising performance metrics, enabling sub- minute insights for reporting dashboards.
+• Developed a sophisticated multi-tier account validation system utilizing Python APIs with services running on AWS Lambda and data stored in AWS databases, increasing financial compliance by nearly 40%.
+• Launched a user interface for managing campaign rules with full CRUD functionality, supported by Python APIs running on cloud infrastructure, streamlining workflow efficiency by 32%.
+• Architected Prism, a marketing analytics platform consolidating creative performance data across ad formats, utilizing AWS CloudFormation for infrastructure deployment and Python for data processing, reducing reporting time by 63%.
+Lead Software Developer & Support Engineer | CitizenNet, A Condé Nast Company
+February 2021 - March 2023, Remote, United States
+• Developed a data analytics dashboard utilizing Python back-end logic and integrating data from Elasticsearch, providing clients with insights into campaigns across digital channels, with data processed on AWS.
+• Designed a scalable data ingestion system using AWS Kinesis streams to capture social media metrics in real-time, transforming raw data via Firehose into
+analytics-ready formats for business intelligence.
+• Established CI/CD pipelines using both GitHub Actions and Jenkins, automating testing and deployment processes for Python applications, reducing integration errors by 44% and deployment time by 30%.
+• Improved client acquisition by 23% by developing an ETL pipeline in Python that aggregates data from social insights API into Google BigQuery, leveraging AWS EC2 and S3 infrastructure.
+• Mentored a junior developer as leader of our development team, providing guidance on AWS best practices, CI/CD workflows, and system design, which enhanced team performance and reduced deployment issues.
+• Automated infrastructure provisioning using AWS CloudFormation templates, ensuring consistent environments across development, staging and production for the analytics platform.
+• Improved website loading times by 30% implementing caching techniques and GZIP compression on infrastructure deployed on AWS EC2.
+• Developed a PWA (Progressive Web App) of the platform using ReactJS, improving user experience and accessibility on mobile devices.
+
+Full-Stack Software Engineer & Founder | Harvey Full-Stack Solutions
+February 2019 - March 2021, Remote, United States
+• Modernized a mid-sized tech company's CMS using Node.js and React with services hosted on AWS, achieving 40% improvement in system efficiency and 20% uplift in client satisfaction.
+• Implemented CI/CD pipelines using GitHub Actions to automate testing and deployment workflows, reducing deployment time by 68% and enabling rapid feature delivery for client projects.
+• Developed a real-time data visualization tool for a marketing firm utilizing Python for data processing and APIs, running on AWS EC2, cutting client campaign insight time by half.
+• Established standardized development practices across projects with GitHub Actions for automated code quality checks, test runs, and containerized deployments to AWS environments.
+• Undertook a financial services provider's migration to a cloud-based environment with microservices, utilizing AWS services (EC2, S3, RDS) and Python for service development.
+• Managed the compliance project for a healthcare provider, implementing strict encryption standards and leveraging AWS security features, leading to successful regulation adherence.
+
+SKILLS
+Industry Knowledge: Machine Learning Systems Architecture, Recommendation Algorithms, Data Pipeline Engineering (Python, AWS), Natural Language Processing (NLP), Feature Engineering, Predictive Modeling, Statistical Analysis, A/B Testing Methodologies, Scalable ML Infrastructure (AWS), Real-time Data Ingestion Pipelines (Kinesis), Cloud Native System Design.
+ML & Data Tools: ML Frameworks (PyTorch, TensorFlow, LightFM, XGBoost, scikit-learn), Data Processing (Pandas, NumPy, Apache Spark, Dask), Visualization (Streamlit, Plotly, NetworkX, Matplotlib), Vector Databases (Elasticsearch, Redis), Statistical Analysis (Statsmodels, SciPy), Python Data Ecosystem (Scikit-Learn, NumPy), BigQuery, Snowflake
+Development & Infrastructure: Cloud Services (AWS: EC2, S3, Lambda, Kinesis, Firehose, CloudFormation, IAM, RDS, SNS; GCP (Vertex, Pub/Sub), Azure), Containerization (Docker, Kubernetes), Workflow Orchestration (Apache Airflow, Celery), Databases (PostgreSQL, Snowflake, BigQuery, Elasticsearch, Redis, MongoDB), CI/CD Pipelines (GitHub Actions, Jenkins), IaC (CloudFormation, Terraform), Version Control (Git/GitHub), MLOps (MLflow), Programming Languages (Python (OOP/IaC), JavaScript, TypeScript), Agentic Coding IDEs (Cursor, Windsurf, Trae, Gemini CLI, Claude Code, OpenHands)
+Technical Skills: Recommendation System Design (LightFM, Collaborative Filtering), NLP (BERT, TF-IDF, Text Embeddings), Time Series Analysis, Clustering Algorithms (K-means, DBSCAN), Hyperparameter Optimization (Grid/Random Search), Feature Engineering (EDA, Pipeline Design), ML Model Deployment (AWS Lambda/API Gateway), Real-time Inference Systems (Lambda, Kinesis Streams), Transfer Learning (Pre-trained Models), CI/CD Automation (GitHub Actions, Jenkins), Snowflake Integration (Schema/Schema Modeling), Security Governance (IAM Role Management, AWS Access Controls)
+
