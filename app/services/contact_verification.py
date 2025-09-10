@@ -6,6 +6,7 @@ import phonenumbers
 from phonenumbers import NumberParseException
 from app.core.config import settings
 from app.core.api_error_handler import APIErrorHandler
+from app.core.sanitizer import InputSanitizer
 
 
 class ContactVerificationService:
@@ -41,10 +42,12 @@ class ContactVerificationService:
                 api_success_count += 1
 
         if client_ip and settings.ABSTRACT_IP_API_KEY:
-            ip_result, ip_api_used = await self._verify_ip_location(client_ip)
-            total_api_calls += 1
-            if ip_api_used:
-                api_success_count += 1
+            sanitized_ip = InputSanitizer.sanitize_ip(client_ip)
+            if sanitized_ip:
+                ip_result, ip_api_used = await self._verify_ip_location(sanitized_ip)
+                total_api_calls += 1
+                if ip_api_used:
+                    api_success_count += 1
 
         risk_score = self._calculate_contact_risk(
             email_result, phone_result, ip_result, contact_info.get("phone")
@@ -77,15 +80,20 @@ class ContactVerificationService:
         }
 
     def _extract_contact_info(self, text: str) -> Dict[str, str]:
+        text = InputSanitizer.sanitize_text(text)
+
         email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
         phone_pattern = r"[\+]?[\d\s\-\(\)\.]{10,20}"
 
         emails = re.findall(email_pattern, text)
         phones = re.findall(phone_pattern, text)
 
+        sanitized_email = InputSanitizer.sanitize_email(emails[0]) if emails else None
+        sanitized_phone = InputSanitizer.sanitize_phone(phones[0]) if phones else None
+
         return {
-            "email": emails[0] if emails else None,
-            "phone": phones[0].strip() if phones else None,
+            "email": sanitized_email,
+            "phone": sanitized_phone,
         }
 
     def _is_test_phone_number(self, phone: str) -> bool:
