@@ -127,6 +127,8 @@ python demo.py
 
 The integrated web interface provides:
 - **Unified Architecture**: Frontend and backend served from single FastAPI application
+- **Modular Design**: Frontend (`static/`) and backend (`app/`) remain completely decoupled
+- **Easy Separation**: Remove 3 lines from `app/main.py` to deploy as API-only service
 - **Interactive API Testing**: Upload files and test all endpoints in real-time
 - **Professional Interface**: Clean, responsive design perfect for demonstrations
 - **Live Results**: JSON responses with syntax highlighting and performance metrics
@@ -178,13 +180,34 @@ app/
 │   └── fraud_scorer.py         # Risk scoring algorithm
 └── main.py                 # FastAPI application and routes
 
+static/                     # Frontend assets (optional)
+├── index.html             # Web interface
+├── style.css              # Styling
+├── script.js              # JavaScript
+└── samples/               # Sample files for testing
+
 tests/                      # Comprehensive test suite (34 tests)
-samples/                    # Test resume files (PDF, DOCX, TXT)
 main.py                     # Railway deployment entry point
 railway.json                # Production deployment configuration
 requirements.txt            # Python dependencies
 demo.py                     # Interactive demonstration
 ```
+
+### Modular Architecture
+
+**API-Only Deployment** (Original requirement):
+```python
+# Remove these 3 lines from app/main.py for pure API service:
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+# @app.get("/")
+# async def serve_frontend(): return FileResponse("static/index.html")
+```
+
+**Integrated Deployment** (Current setup):
+- Frontend and backend remain completely decoupled
+- `static/` directory can be served by any web server (nginx, Apache, CDN)
+- API endpoints work independently with any frontend framework
+- Easy to separate for microservices architecture
 
 ## Technical Architecture
 
