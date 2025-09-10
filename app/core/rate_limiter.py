@@ -18,6 +18,6 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
         content={
             "error": "Rate limit exceeded",
             "detail": f"Too many requests. Limit: {exc.detail}",
-            "retry_after": exc.retry_after,
+            "retry_after": 60,
         },
     )
