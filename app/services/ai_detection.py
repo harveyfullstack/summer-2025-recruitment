@@ -13,27 +13,19 @@ class AIContentDetectionService:
 
     async def detect_ai_content(self, text: str) -> Dict[str, Any]:
         text = self._prepare_text(text)
-        ai_probability, used_api, sections_data = await self._analyze_text(text)
+        ai_probability, used_api = await self._analyze_text(text)
 
         confidence = 0.9 if used_api else 0.3
 
-        sections_analyzed = sections_data.get("sections", {})
-        suspicious_sections = [
-            section for section, score in sections_analyzed.items() if score > 0.7
-        ]
-
         return {
             "overall_ai_probability": ai_probability,
-            "sections_analyzed": sections_analyzed,
-            "suspicious_sections": suspicious_sections,
             "confidence": confidence,
             "detection_method": "winston_ai" if used_api else "pattern_fallback",
         }
 
-    async def _analyze_text(self, text: str) -> tuple[float, bool, Dict[str, Any]]:
+    async def _analyze_text(self, text: str) -> tuple[float, bool]:
         if not settings.WINSTON_AI_API_KEY:
-            score, sections = self._basic_ai_detection(text)
-            return score, False, {"sections": sections}
+            return self._basic_ai_detection(text), False
 
         try:
             response = await self.client.post(
@@ -54,23 +46,20 @@ class AIContentDetectionService:
                 "Winston AI", response
             )
             if not success:
-                score, sections = self._basic_ai_detection(text)
-                return score, False, {"sections": sections}
+                return self._basic_ai_detection(text), False
 
             data = response.json()
             if "error" in data or data.get("status") != 200:
-                score, sections = self._basic_ai_detection(text)
-                return score, False, {"sections": sections}
+                return self._basic_ai_detection(text), False
 
             ai_score = float(data.get("score", 0.0))
-            return ai_score / 100.0, True, {"sections": {}}
+            return ai_score / 100.0, True
         except Exception:
             pass
 
-        score, sections = self._basic_ai_detection(text)
-        return score, False, {"sections": sections}
+        return self._basic_ai_detection(text), False
 
-    def _basic_ai_detection(self, text: str) -> tuple[float, Dict[str, float]]:
+    def _basic_ai_detection(self, text: str) -> float:
         ai_indicators = [
             r"\bas an ai\b",
             r"\bi am an ai\b",
@@ -88,60 +77,19 @@ class AIContentDetectionService:
             r"\bresults-driven\b",
         ]
 
-        sections = self._extract_sections(text)
-        section_scores = {}
-        overall_score = 0.0
+        ai_score = 0.0
+        generic_score = 0.0
+        text_lower = text.lower()
 
-        for section_name, section_text in sections.items():
-            ai_score = 0.0
-            generic_score = 0.0
-            text_lower = section_text.lower()
+        for pattern in ai_indicators:
+            if re.search(pattern, text_lower):
+                ai_score += 0.3
 
-            for pattern in ai_indicators:
-                if re.search(pattern, text_lower):
-                    ai_score += 0.3
+        for pattern in generic_phrases:
+            if re.search(pattern, text_lower):
+                generic_score += 0.1
 
-            for pattern in generic_phrases:
-                if re.search(pattern, text_lower):
-                    generic_score += 0.1
-
-            section_score = min(ai_score + (generic_score * 0.5), 1.0)
-            section_scores[section_name] = section_score
-            overall_score = max(overall_score, section_score)
-
-        return overall_score, section_scores
-
-    def _extract_sections(self, text: str) -> Dict[str, str]:
-        sections = {}
-
-        section_patterns = [
-            (
-                r"(?i)(summary|profile|objective)[\s\S]*?(?=\n\s*[A-Z][A-Z\s]+\n|\n\s*\n|$)",
-                "summary",
-            ),
-            (
-                r"(?i)(experience|employment|work history)[\s\S]*?(?=\n\s*[A-Z][A-Z\s]+\n|\n\s*\n|$)",
-                "experience",
-            ),
-            (
-                r"(?i)(education|academic)[\s\S]*?(?=\n\s*[A-Z][A-Z\s]+\n|\n\s*\n|$)",
-                "education",
-            ),
-            (
-                r"(?i)(skills|technical|competencies)[\s\S]*?(?=\n\s*[A-Z][A-Z\s]+\n|\n\s*\n|$)",
-                "skills",
-            ),
-        ]
-
-        for pattern, section_name in section_patterns:
-            match = re.search(pattern, text)
-            if match:
-                sections[section_name] = match.group(0).strip()
-
-        if not sections:
-            sections["full_text"] = text
-
-        return sections
+        return min(ai_score + (generic_score * 0.5), 1.0)
 
     def _prepare_text(self, text: str) -> str:
         text = text.strip()

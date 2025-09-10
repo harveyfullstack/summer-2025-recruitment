@@ -37,12 +37,6 @@ class AIContentResult(BaseModel):
     overall_ai_probability: float = Field(
         ge=0, le=1, description="Overall probability that content was AI-generated"
     )
-    sections_analyzed: Dict[str, float] = Field(
-        default={}, description="AI probability scores for individual resume sections"
-    )
-    suspicious_sections: List[str] = Field(
-        default=[], description="Resume sections flagged as likely AI-generated"
-    )
     confidence: float = Field(
         ge=0, le=1, description="Confidence level in the AI detection analysis"
     )
