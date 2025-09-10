@@ -245,6 +245,7 @@ class ContactVerificationService:
             "ip_address": ip_address,
             "country_code": "UNKNOWN",
             "is_vpn": False,
+            "is_proxy": False,
             "is_tor": False,
             "threat_level": "unknown",
             "abuse_confidence": 0,

@@ -19,6 +19,10 @@ class ContactVerificationResult(BaseModel):
         None,
         description="Phone number validation results including format, carrier, and geographic data",
     )
+    ip_verification: Optional[Dict[str, Any]] = Field(
+        None,
+        description="IP address verification results including geolocation, VPN/Tor detection, and threat analysis",
+    )
     risk_score: float = Field(
         ge=0,
         le=1,
