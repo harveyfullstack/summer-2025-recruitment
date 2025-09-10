@@ -46,7 +46,18 @@ function handleFileSelect(file) {
 
 function updateTestButton() {
     const isHealthCheck = endpoint.value === '/health';
-    testBtn.disabled = !isHealthCheck && !selectedFile;
+    const uploadGroup = document.querySelector('.form-group:nth-child(2)');
+    const samplesSection = document.querySelector('.samples');
+    
+    if (isHealthCheck) {
+        uploadGroup.style.display = 'none';
+        samplesSection.style.display = 'none';
+        testBtn.disabled = false;
+    } else {
+        uploadGroup.style.display = 'flex';
+        samplesSection.style.display = 'block';
+        testBtn.disabled = !selectedFile;
+    }
 }
 
 endpoint.addEventListener('change', updateTestButton);
