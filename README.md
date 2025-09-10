@@ -208,6 +208,7 @@ app/
 │   ├── cache.py            # In-memory caching system
 │   ├── config.py           # Environment configuration
 │   ├── rate_limiter.py     # API rate limiting
+│   ├── sanitizer.py        # Input sanitization
 │   └── validation.py       # File and input validation
 ├── models/
 │   └── schemas.py          # Pydantic response models
@@ -224,7 +225,7 @@ static/                     # Frontend assets (optional)
 ├── style.css              # Styling
 ├── script.js              # JavaScript
 
-tests/                      # Comprehensive test suite (34 tests)
+tests/                      # Comprehensive test suite (42 tests)
 main.py                     # Railway deployment entry point
 railway.json                # Production deployment configuration
 requirements.txt            # Python dependencies
@@ -315,6 +316,7 @@ All detection endpoints return structured JSON with confidence scores:
 
 ### Security Implementation
 - **Input Validation**: File type, size, and encoding verification
+- **Input Sanitization**: Email, phone, IP, and text content cleaning
 - **Sanitization**: Secure file processing with automatic cleanup
 - **API Security**: Controlled documentation access and rate limiting
 - **Privacy Compliance**: In-memory processing with no persistent storage
@@ -330,7 +332,7 @@ All detection endpoints return structured JSON with confidence scores:
 - **Document Processing**: PyMuPDF (PDF), python-docx (DOCX)
 - **External APIs**: Abstract API suite, Winston AI
 - **Performance**: slowapi (rate limiting), in-memory caching
-- **Testing**: pytest with 34 comprehensive tests
+- **Testing**: pytest with 42 comprehensive tests
 - **Security**: File validation, input sanitization
 
 ## Technical Architecture

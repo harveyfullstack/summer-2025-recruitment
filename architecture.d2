@@ -45,6 +45,15 @@ api_gateway: {
       stroke: "#388E3C"
     }
   }
+  
+  input_sanitizer: {
+    label: Input Sanitizer\n(Text, Email, Phone, IP)
+    shape: hexagon
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#D32F2F"
+    }
+  }
 }
 
 # Document Processing Layer
@@ -192,10 +201,11 @@ cache_layer: {
 client -> api_gateway: "Upload Resume\n(PDF/DOCX/TXT)"
 
 api_gateway.rate_limiter -> api_gateway.file_validator: "Rate Check"
-api_gateway.file_validator -> doc_processor: "Validated File"
+api_gateway.file_validator -> api_gateway.input_sanitizer: "Validated File"
+api_gateway.input_sanitizer -> doc_processor: "Sanitized Input"
 
-doc_processor -> core_services.contact_service: "Extracted Text"
-doc_processor -> core_services.ai_service: "Extracted Text"
+doc_processor -> core_services.contact_service: "Sanitized Text"
+doc_processor -> core_services.ai_service: "Sanitized Text"
 doc_processor -> core_services.document_service: "File Metadata"
 
 # External API connections
@@ -253,6 +263,7 @@ security_note: |md
   - File size limits (10MB)
   - Type validation
   - Input sanitization
+  - Email/Phone/IP validation
   - API key isolation
   - Rate limiting
 | {
