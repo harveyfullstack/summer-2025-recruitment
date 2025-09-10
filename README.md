@@ -69,15 +69,41 @@ DEBUG=True
 DOCS_ENABLED=True  # Enable API documentation at /docs
 ```
 
-### 3. Run the System
+### 3. Choose Your Setup
 
+**Backend Only** (API development/testing):
 ```bash
-# Start the API server
+uvicorn app.main:app --reload --port 8000
+# API available at: http://localhost:8000
+# API docs at: http://localhost:8000/docs (if DOCS_ENABLED=True)
+```
+
+**Frontend Only** (demo/presentation):
+```bash
+# Option 1: Direct file open
+open demo-frontend.html
+
+# Option 2: Local server (recommended)
+python -m http.server 8080
+# Visit: http://localhost:8080/demo-frontend.html
+# Uses production API: https://resume-fraud-api-production.up.railway.app
+```
+
+**Full Development Setup** (backend + frontend):
+```bash
+# Terminal 1: Start backend
 uvicorn app.main:app --reload --port 8000
 
-# Run live demonstration (Recommended)
-python demo.py
+# Terminal 2: Start frontend
+python -m http.server 8080
 
+# Backend: http://localhost:8000
+# Frontend: http://localhost:8080/demo-frontend.html
+# (Edit demo-frontend.html API_BASE to use localhost:8000 for local API)
+```
+
+**Quick Validation**:
+```bash
 # Test the system
 python test_api.py
 
@@ -87,13 +113,27 @@ python run_tests.py
 
 ### 4. Live Demonstration
 
-**Recommended**: Run the enhanced demonstration to see the system in action:
+**Option A - Interactive Frontend Demo** (Recommended for presentations):
+```bash
+# Open the minimal API testing interface
+open demo-frontend.html
+# Or serve locally:
+python -m http.server 8080
+# Then visit: http://localhost:8080/demo-frontend.html
+```
 
+**Option B - Command Line Demo**:
 ```bash
 python demo.py
 ```
 
-This provides:
+The frontend demo provides:
+- **Interactive API Testing**: Upload files and test all endpoints in real-time
+- **Professional Interface**: Clean, responsive design perfect for demonstrations
+- **Live Results**: JSON responses with syntax highlighting and performance metrics
+- **Sample Files**: Quick-load buttons for immediate testing
+
+The command line demo provides:
 - **Technical Analysis**: Detailed breakdown of weighted algorithm (40%/35%/25%)
 - **Comparative Intelligence**: Cross-file pattern analysis and format-based insights
 - **API Integration Showcase**: Fallback mechanisms and error handling demonstration
